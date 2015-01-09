@@ -2874,9 +2874,9 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef ETHERNET
-  char *rrh_eNB_ip = "192.168.12.196";
+  char *rrh_eNB_ip = "127.0.0.1";
   int rrh_eNB_port = 50000;
-  char *rrh_UE_ip = "192.168.12.196";
+  char *rrh_UE_ip = "127.0.0.1";
   int rrh_UE_port = 22222;
 #endif
   //  int amp;
