@@ -830,7 +830,11 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
 
 
 
-                            if (strcmp(prefix_type, "NORMAL") == 0) {
+                            if (!prefix_type)
+                                AssertError (0, parse_errors ++,
+                                        "Failed to parse eNB configuration file %s, enb %d define %s: NORMAL,EXTENDED!\n",
+                                        lib_config_file_name_pP, i, ENB_CONFIG_STRING_PREFIX_TYPE);
+                            else if (strcmp(prefix_type, "NORMAL") == 0) {
                                 enb_properties.properties[enb_properties_index]->prefix_type[j] = NORMAL;
                             } else  if (strcmp(prefix_type, "EXTENDED") == 0) {
                                 enb_properties.properties[enb_properties_index]->prefix_type[j] = EXTENDED;
@@ -896,7 +900,11 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
                                         "Failed to parse eNB configuration file %s, enb %d unknown value \"%d\" for prach_config_index choice: 0..1023 !\n",
                                         lib_config_file_name_pP, i, prach_config_index);
 
-                            if (strcmp(prach_high_speed, "ENABLE") == 0)
+                            if (!prach_high_speed)
+                                AssertError (0, parse_errors ++,
+                                        "Failed to parse eNB configuration file %s, enb %d define %s: ENABLE,DISABLE!\n",
+                                        lib_config_file_name_pP, i, ENB_CONFIG_STRING_PRACH_HIGH_SPEED);
+                            else if (strcmp(prach_high_speed, "ENABLE") == 0)
                                 enb_properties.properties[enb_properties_index]->prach_high_speed[j] = TRUE;
                             else if (strcmp(prach_high_speed, "DISABLE") == 0)
                                 enb_properties.properties[enb_properties_index]->prach_high_speed[j] = FALSE;
@@ -958,7 +966,12 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
                                 AssertError (0, parse_errors ++,
                                         "Failed to parse eNB configuration file %s, enb %d unknown value \"%d\" for pusch_n_SB choice: 1..4!\n",
                                         lib_config_file_name_pP, i, pusch_n_SB);
-                            if (strcmp(pusch_hoppingMode,"interSubFrame")==0)
+
+                            if (!pusch_hoppingMode)
+                                AssertError (0, parse_errors ++,
+                                        "Failed to parse eNB configuration file %s, enb %d define %s: interSubframe,intraAndInterSubframe!\n",
+                                        lib_config_file_name_pP, i, ENB_CONFIG_STRING_PUSCH_HOPPINGMODE);
+                            else if (strcmp(pusch_hoppingMode,"interSubFrame")==0)
                                 enb_properties.properties[enb_properties_index]->pusch_hoppingMode[j] = PUSCH_ConfigCommon__pusch_ConfigBasic__hoppingMode_interSubFrame;
                             else if (strcmp(pusch_hoppingMode,"intraAndInterSubFrame")==0)
                                 enb_properties.properties[enb_properties_index]->pusch_hoppingMode[j] = PUSCH_ConfigCommon__pusch_ConfigBasic__hoppingMode_intraAndInterSubFrame;
@@ -973,7 +986,11 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
                                         "Failed to parse eNB configuration file %s, enb %d unknown value \"%s\" for pusch_hoppingOffset choice: 0..98!\n",
                                         lib_config_file_name_pP, i, pusch_hoppingMode);
 
-                            if (strcmp(pusch_enable64QAM, "ENABLE") == 0)
+                            if (!pusch_enable64QAM)
+                                AssertError (0, parse_errors ++,
+                                        "Failed to parse eNB configuration file %s, enb %d define %s: ENABLE,DISABLE!\n",
+                                        lib_config_file_name_pP, i, ENB_CONFIG_STRING_PUSCH_ENABLE64QAM);
+                            else if (strcmp(pusch_enable64QAM, "ENABLE") == 0)
                                 enb_properties.properties[enb_properties_index]->pusch_enable64QAM[j] = TRUE;
                             else if (strcmp(pusch_enable64QAM, "DISABLE") == 0)
                                 enb_properties.properties[enb_properties_index]->pusch_enable64QAM[j] = FALSE;
@@ -982,7 +999,11 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
                                         "Failed to parse eNB configuration file %s, enb %d unknown value \"%s\" for pusch_enable64QAM choice: ENABLE,DISABLE!\n",
                                         lib_config_file_name_pP, i, pusch_enable64QAM);
 
-                            if (strcmp(pusch_groupHoppingEnabled, "ENABLE") == 0)
+                            if (!pusch_groupHoppingEnabled)
+                                AssertError (0, parse_errors ++,
+                                        "Failed to parse eNB configuration file %s, enb %d define %s: ENABLE,DISABLE!\n",
+                                        lib_config_file_name_pP, i, ENB_CONFIG_STRING_PUSCH_GROUP_HOPPING_EN);
+                            else if (strcmp(pusch_groupHoppingEnabled, "ENABLE") == 0)
                                 enb_properties.properties[enb_properties_index]->pusch_groupHoppingEnabled[j] = TRUE;
                             else if (strcmp(pusch_groupHoppingEnabled, "DISABLE") == 0)
                                 enb_properties.properties[enb_properties_index]->pusch_groupHoppingEnabled[j] = FALSE;
@@ -998,7 +1019,11 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
                                         "Failed to parse eNB configuration file %s, enb %d unknown value \"%d\" for pusch_groupAssignment choice: 0..29!\n",
                                         lib_config_file_name_pP, i, pusch_groupAssignment);
 
-                            if (strcmp(pusch_sequenceHoppingEnabled, "ENABLE") == 0)
+                            if (!pusch_sequenceHoppingEnabled)
+                                AssertError (0, parse_errors ++,
+                                        "Failed to parse eNB configuration file %s, enb %d define %s: ENABLE,DISABLE!\n",
+                                        lib_config_file_name_pP, i, ENB_CONFIG_STRING_PUSCH_SEQUENCE_HOPPING_EN);
+                            else if (strcmp(pusch_sequenceHoppingEnabled, "ENABLE") == 0)
                                 enb_properties.properties[enb_properties_index]->pusch_sequenceHoppingEnabled[j] = TRUE;
                             else if (strcmp(pusch_sequenceHoppingEnabled, "DISABLE") == 0)
                                 enb_properties.properties[enb_properties_index]->pusch_sequenceHoppingEnabled[j] = FALSE;
