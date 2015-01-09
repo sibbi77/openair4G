@@ -1,7 +1,5 @@
 /home/sebastian/git/openair4G/targets/RT/USER/TOOLS/thread_ipc.c
 /home/sebastian/git/openair4G/targets/RT/USER/TOOLS/thread_ipc.h
-/home/sebastian/git/openair4G/targets/RT/USER/dot11.c
-/home/sebastian/git/openair4G/targets/RT/USER/ieee80211p-softmodem.c
 /home/sebastian/git/openair4G/targets/RT/USER/init_b200.sh
 /home/sebastian/git/openair4G/targets/RT/USER/init_exmimo.sh
 /home/sebastian/git/openair4G/targets/RT/USER/init_exmimo2.sh
@@ -109,6 +107,7 @@
 /home/sebastian/git/openair4G/openair2/ENB_APP/enb_app.c
 /home/sebastian/git/openair4G/openair2/ENB_APP/enb_config.c
 /home/sebastian/git/openair4G/openair2/UTIL/LOG/log.c
+/home/sebastian/git/openair4G/openair2/UTIL/LOG/log.h
 /home/sebastian/git/openair4G/openair2/UTIL/LOG/vcd_signal_dumper.c
 /home/sebastian/git/openair4G/openair2/LAYER2/openair2_proc.c
 /home/sebastian/git/openair4G/openair2/LAYER2/PDCP_v10.1.0/pdcp.c
@@ -188,3 +187,4 @@
 /home/sebastian/git/openair4G/common/utils/itti/timer.c
 /home/sebastian/git/openair4G/common/utils/collection/hashtable/hashtable.c
 /home/sebastian/git/openair4G/common/utils/collection/hashtable/obj_hashtable.c
+/home/sebastian/git/openair4G/common/utils/assertions.h
