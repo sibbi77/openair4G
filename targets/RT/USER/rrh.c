@@ -54,9 +54,12 @@
 
 #define BUF_LEN 4096+32
 #define RRH_eNB_PORT 50000
-#define RRH_eNB_DEST_IP "127.0.0.1"  
+#define RRH_eNB_DEST_IP "127.0.0.1"  // localhost
+//#define RRH_eNB_DEST_IP "192.168.12.148"  //Hecatonchire ip address
+
 #define RRH_UE_PORT 22222
-#define RRH_UE_DEST_IP "127.0.0.1"  
+//#define RRH_UE_DEST_IP "192.168.12.148"  //Hecatonchire ip address
+#define RRH_UE_DEST_IP "127.0.0.1"  // localhost
 
 #define FRAME_MAX_SIZE 307200 
 #define DEFAULT_PERIOD_NS 133333
