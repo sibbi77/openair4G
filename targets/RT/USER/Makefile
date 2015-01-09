@@ -42,7 +42,7 @@ ifeq ($(ETHERNET),1)
 endif
 
 ifeq ($(DEBUG),1)	
-CFLAGS += -g -ggdb
+CFLAGS += -g -ggdb -O0
 #CFLAGS += -DRRC_MSG_PRINT
 #CFLAGS += -DPDCP_MSG_PRINT
 endif
