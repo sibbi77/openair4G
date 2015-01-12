@@ -2892,6 +2892,10 @@ int main(int argc, char **argv) {
   int error_code;
 #endif
 
+#ifdef DEBUG_STDOUT
+  setvbuf(stdout, NULL, _IONBF, 0); // disable stdout buffering
+#endif
+
   memset(&openair0_cfg[0],0,sizeof(openair0_config_t)*MAX_CARDS);
 
   set_latency_target();
@@ -3306,8 +3310,8 @@ int main(int argc, char **argv) {
     for (i=0;i<4;i++) {
 
       openair0_cfg[card].tx_gain[i] = tx_gain[0][i];
-      openair0_cfg[card].rx_gain[i] = ((UE_flag==0) ? PHY_vars_eNB_g[0][0]->rx_total_gain_eNB_dB : 
-				                      PHY_vars_UE_g[0][0]->rx_total_gain_dB) - 73;  // calibrated for USRP B210 @ 2.6 GHz
+      openair0_cfg[card].rx_gain[i] = ((UE_flag==0) ? PHY_vars_eNB_g[0][0]->rx_total_gain_eNB_dB :
+                                                      PHY_vars_UE_g[0][0]->rx_total_gain_dB) - 73.0;  // calibrated for USRP B210 @ 2.6 GHz
       openair0_cfg[card].tx_freq[i] = (UE_flag==0) ? downlink_frequency[0][i] : downlink_frequency[0][i]+uplink_frequency_offset[0][i];
       openair0_cfg[card].rx_freq[i] = (UE_flag==0) ? downlink_frequency[0][i] + uplink_frequency_offset[0][i] : downlink_frequency[0][i];
       printf("Setting tx_gain %f, rx_gain %f, tx_freq %f, rx_freq %f\n",
