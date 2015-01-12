@@ -251,112 +251,112 @@ static void enb_config_display(void) {
     for (i = 0; i < enb_properties.number; i++) {
         printf( "ENB CONFIG for instance %u:\n\n", i);
         printf( "\teNB name:           \t%s:\n",enb_properties.properties[i]->eNB_name);
-        printf( "\teNB ID:             \t%u:\n",enb_properties.properties[i]->eNB_id);
+        printf( "\teNB ID:             \t%"PRIu32":\n",enb_properties.properties[i]->eNB_id);
         printf( "\tCell type:          \t%s:\n",enb_properties.properties[i]->cell_type == CELL_MACRO_ENB ? "CELL_MACRO_ENB":"CELL_HOME_ENB");
-        printf( "\tTAC:                \t%u:\n",enb_properties.properties[i]->tac);
-        printf( "\tMCC:                \t%u:\n",enb_properties.properties[i]->mcc);
+        printf( "\tTAC:                \t%"PRIu16":\n",enb_properties.properties[i]->tac);
+        printf( "\tMCC:                \t%"PRIu16":\n",enb_properties.properties[i]->mcc);
         if (enb_properties.properties[i]->mnc_digit_length == 3)
-            printf( "\tMNC:                \t%03u:\n",enb_properties.properties[i]->mnc);
+            printf( "\tMNC:                \t%03"PRIu16":\n",enb_properties.properties[i]->mnc);
         else
-            printf( "\tMNC:                \t%02u:\n",enb_properties.properties[i]->mnc);
+            printf( "\tMNC:                \t%02"PRIu16":\n",enb_properties.properties[i]->mnc);
 
         for (j=0; j< enb_properties.properties[i]->nb_cc; j++) {
-            printf( "\teutra band for CC %d:         \t%d:\n",j,enb_properties.properties[i]->eutra_band[j]);
-            printf( "\tdownlink freq for CC %d:      \t%ju:\n",j,enb_properties.properties[i]->downlink_frequency[j]);
-            printf( "\tuplink freq for CC %d:        \t%d:\n",j,enb_properties.properties[i]->uplink_frequency_offset[j]);
+            printf( "\teutra band for CC %d:         \t%"PRId16":\n",j,enb_properties.properties[i]->eutra_band[j]);
+            printf( "\tdownlink freq for CC %d:      \t%"PRIu64":\n",j,enb_properties.properties[i]->downlink_frequency[j]);
+            printf( "\tuplink freq offset for CC %d: \t%"PRId32":\n",j,enb_properties.properties[i]->uplink_frequency_offset[j]);
 
-            printf( "\n\tCell ID for CC %d:\t%d:\n",j,enb_properties.properties[i]->Nid_cell[j]);
-            printf( "\tN_RB_DL for CC %d:\t%d:\n",j,enb_properties.properties[i]->N_RB_DL[j]);
+            printf( "\n\tCell ID for CC %d:\t%"PRId16":\n",j,enb_properties.properties[i]->Nid_cell[j]);
+            printf( "\tN_RB_DL for CC %d:\t%"PRId16":\n",j,enb_properties.properties[i]->N_RB_DL[j]);
             printf( "\tnb_antennas_tx for CC %d:\t%d:\n",j,enb_properties.properties[i]->nb_antennas_tx[j]);
             printf( "\tnb_antennas_rx for CC %d:\t%d:\n",j,enb_properties.properties[i]->nb_antennas_rx[j]);
 
       // RACH-Config
-	    printf( "\trach_numberOfRA_Preambles for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_numberOfRA_Preambles[j]);
+            printf( "\trach_numberOfRA_Preambles for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_numberOfRA_Preambles[j]);
 	    printf( "\trach_preamblesGroupAConfig for CC %d:\t%d:\n",j,enb_properties.properties[i]->rach_preamblesGroupAConfig[j]);
 	    if (enb_properties.properties[i]->rach_preamblesGroupAConfig[j]) {
-	      printf( "\trach_sizeOfRA_PreamblesGroupA for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_sizeOfRA_PreamblesGroupA[j]);
-	      printf( "\trach_messageSizeGroupA for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_messageSizeGroupA[j]); 
+	      printf( "\trach_sizeOfRA_PreamblesGroupA for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_sizeOfRA_PreamblesGroupA[j]);
+	      printf( "\trach_messageSizeGroupA for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_messageSizeGroupA[j]);
 	      printf( "\trach_messagePowerOffsetGroupB for CC %d:\t%d:\n",j,enb_properties.properties[i]->rach_messagePowerOffsetGroupB[j]);
 	    }
-	    printf( "\trach_powerRampingStep for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_powerRampingStep[j]);
-	    printf( "\trach_preambleInitialReceivedTargetPower for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_preambleInitialReceivedTargetPower[j]);
-	    printf( "\trach_preambleTransMax for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_preambleTransMax[j]);
-	    printf( "\trach_raResponseWindowSize for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_raResponseWindowSize[j]);
-	    printf( "\trach_macContentionResolutionTimer for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_macContentionResolutionTimer[j]);
-	    printf( "\trach_maxHARQ_Msg3Tx for CC %d:\t%jd:\n",j,enb_properties.properties[i]->rach_maxHARQ_Msg3Tx[j]);
+	    printf( "\trach_powerRampingStep for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_powerRampingStep[j]);
+	    printf( "\trach_preambleInitialReceivedTargetPower for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_preambleInitialReceivedTargetPower[j]);
+	    printf( "\trach_preambleTransMax for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_preambleTransMax[j]);
+	    printf( "\trach_raResponseWindowSize for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_raResponseWindowSize[j]);
+	    printf( "\trach_macContentionResolutionTimer for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_macContentionResolutionTimer[j]);
+	    printf( "\trach_maxHARQ_Msg3Tx for CC %d:\t%ld:\n",j,enb_properties.properties[i]->rach_maxHARQ_Msg3Tx[j]);
 	    
 	    // BCCH-Config
-	    printf( "\tbcch_modificationPeriodCoeff for CC %d:\t%jd:\n",j,enb_properties.properties[i]->bcch_modificationPeriodCoeff[j]);
+	    printf( "\tbcch_modificationPeriodCoeff for CC %d:\t%ld:\n",j,enb_properties.properties[i]->bcch_modificationPeriodCoeff[j]);
 	    
 	    // PCCH-Config
-	    printf( "\tpcch_defaultPagingCycle for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pcch_defaultPagingCycle[j]);
-	    printf( "\tpcch_nB for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pcch_nB[j]);
+	    printf( "\tpcch_defaultPagingCycle for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pcch_defaultPagingCycle[j]);
+	    printf( "\tpcch_nB for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pcch_nB[j]);
 	    
 	    // PRACH-Config
-	    printf( "\tprach_root for CC %d:\t%jd:\n",j,enb_properties.properties[i]->prach_root[j]);
-	    printf( "\tprach_config_index for CC %d:\t%jd:\n",j,enb_properties.properties[i]->prach_config_index[j]);
+	    printf( "\tprach_root for CC %d:\t%ld:\n",j,enb_properties.properties[i]->prach_root[j]);
+	    printf( "\tprach_config_index for CC %d:\t%ld:\n",j,enb_properties.properties[i]->prach_config_index[j]);
 	    printf( "\tprach_high_speed for CC %d:\t%d:\n",j,enb_properties.properties[i]->prach_high_speed[j]);
-	    printf( "\tprach_zero_correlation for CC %d:\t%jd:\n",j,enb_properties.properties[i]->prach_zero_correlation[j]);
-	    printf( "\tprach_freq_offset for CC %d:\t%jd:\n",j,enb_properties.properties[i]->prach_freq_offset[j]);
+	    printf( "\tprach_zero_correlation for CC %d:\t%ld:\n",j,enb_properties.properties[i]->prach_zero_correlation[j]);
+	    printf( "\tprach_freq_offset for CC %d:\t%ld:\n",j,enb_properties.properties[i]->prach_freq_offset[j]);
 	    
 	    // PDSCH-Config
-	    printf( "\tpdsch_referenceSignalPower for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pdsch_referenceSignalPower[j]);  
-	    printf( "\tpdsch_p_b for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pdsch_p_b[j]);  
+	    printf( "\tpdsch_referenceSignalPower for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pdsch_referenceSignalPower[j]);
+	    printf( "\tpdsch_p_b for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pdsch_p_b[j]);
 	    
 	    // PUSCH-Config
-	    printf( "\tpusch_n_SB for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pusch_n_SB[j]);  
-	    printf( "\tpusch_hoppingMode for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pusch_hoppingMode[j]);
-	    printf( "\tpusch_hoppingOffset for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pusch_hoppingOffset[j]);
+	    printf( "\tpusch_n_SB for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pusch_n_SB[j]);
+	    printf( "\tpusch_hoppingMode for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pusch_hoppingMode[j]);
+	    printf( "\tpusch_hoppingOffset for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pusch_hoppingOffset[j]);
 	    printf( "\tpusch_enable64QAM for CC %d:\t%d:\n",j,enb_properties.properties[i]->pusch_enable64QAM[j]);
 	    printf( "\tpusch_groupHoppingEnabled for CC %d:\t%d:\n",j,enb_properties.properties[i]->pusch_groupHoppingEnabled[j]);
-	    printf( "\tpusch_groupAssignment for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pusch_groupAssignment[j]);
+	    printf( "\tpusch_groupAssignment for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pusch_groupAssignment[j]);
 	    printf( "\tpusch_sequenceHoppingEnabled for CC %d:\t%d:\n",j,enb_properties.properties[i]->pusch_sequenceHoppingEnabled[j]);
-	    printf( "\tpusch_nDMRS1 for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pusch_nDMRS1[j]);
+	    printf( "\tpusch_nDMRS1 for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pusch_nDMRS1[j]);
 	    
 	    // PUCCH-Config
 	    
-	    printf( "\tpucch_delta_shift for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pucch_delta_shift[j]);
-	    printf( "\tpucch_nRB_CQI for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pucch_nRB_CQI[j]);
-	    printf( "\tpucch_nCS_AN for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pucch_nCS_AN[j]);
+	    printf( "\tpucch_delta_shift for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pucch_delta_shift[j]);
+	    printf( "\tpucch_nRB_CQI for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pucch_nRB_CQI[j]);
+	    printf( "\tpucch_nCS_AN for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pucch_nCS_AN[j]);
 #ifndef Rel10
-	    printf( "\tpucch_n1_AN for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pucch_n1_AN[j]);
+	    printf( "\tpucch_n1_AN for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pucch_n1_AN[j]);
 #endif
 	    
 	    // SRS Config
 	    printf( "\tsrs_enable for CC %d:\t%d:\n",j,enb_properties.properties[i]->srs_enable[j]);
 	    if (enb_properties.properties[i]->srs_enable[j]) {
-	      printf( "\tsrs_BandwidthConfig for CC %d:\t%jd:\n",j,enb_properties.properties[i]->srs_BandwidthConfig[j]);
-	      printf( "\tsrs_BandwidthConfig for CC %d:\t%jd:\n",j,enb_properties.properties[i]->srs_SubframeConfig[j]);
+	      printf( "\tsrs_BandwidthConfig for CC %d:\t%ld:\n",j,enb_properties.properties[i]->srs_BandwidthConfig[j]);
+	      printf( "\tsrs_BandwidthConfig for CC %d:\t%ld:\n",j,enb_properties.properties[i]->srs_SubframeConfig[j]);
 	      printf( "\tsrs_ackNackST for CC %d:\t%d:\n",j,enb_properties.properties[i]->srs_ackNackST[j]); 
 	      printf( "\tsrs_MaxUpPts for CC %d:\t%d:\n",j,enb_properties.properties[i]->srs_MaxUpPts[j]);
 	    }
     
 	    // uplinkPowerControlCommon
 	    
-	    printf( "\tpusch_p0_Nominal for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pusch_p0_Nominal[j]);
-	    printf( "\tpucch_p0_Nominal for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pucch_p0_Nominal[j]);
-	    printf( "\tpusch_alpha for CC %d:\t%jd:\n",j,enb_properties.properties[i]->pusch_alpha[j]);
+	    printf( "\tpusch_p0_Nominal for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pusch_p0_Nominal[j]);
+	    printf( "\tpucch_p0_Nominal for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pucch_p0_Nominal[j]);
+	    printf( "\tpusch_alpha for CC %d:\t%ld:\n",j,enb_properties.properties[i]->pusch_alpha[j]);
 	    printf( "\tpucch_deltaF_Format1 for CC %d:\t%d:\n",j,enb_properties.properties[i]->pucch_deltaF_Format1[j]);
 	    printf( "\tpucch_deltaF_Format1b for CC %d:\t%d:\n",j,enb_properties.properties[i]->pucch_deltaF_Format1b[j]);
 	    printf( "\tpucch_deltaF_Format2 for CC %d:\t%d:\n",j,enb_properties.properties[i]->pucch_deltaF_Format2[j]);
 	    printf( "\tpucch_deltaF_Format2a for CC %d:\t%d:\n",j,enb_properties.properties[i]->pucch_deltaF_Format2a[j]);    
 	    printf( "\tpucch_deltaF_Format2b for CC %d:\t%d:\n",j,enb_properties.properties[i]->pucch_deltaF_Format2b[j]);
-	    printf( "\tmsg3_delta_Preamble for CC %d:\t%jd:\n",j,enb_properties.properties[i]->msg3_delta_Preamble[j]);
-	    printf( "\tul_CyclicPrefixLength for CC %d:\t%jd:\n",j,enb_properties.properties[i]->ul_CyclicPrefixLength[j]);
+	    printf( "\tmsg3_delta_Preamble for CC %d:\t%ld:\n",j,enb_properties.properties[i]->msg3_delta_Preamble[j]);
+	    printf( "\tul_CyclicPrefixLength for CC %d:\t%ld:\n",j,enb_properties.properties[i]->ul_CyclicPrefixLength[j]);
 	    
 	    // UE Timers and Constants
 	    
-	    printf( "\tue_TimersAndConstants_t300 for CC %d:\t%jd:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_t300[j]);
-	    printf( "\tue_TimersAndConstants_t301 for CC %d:\t%jd:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_t301[j]);
-	    printf( "\tue_TimersAndConstants_t310 for CC %d:\t%jd:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_t310[j]);
-	    printf( "\tue_TimersAndConstants_n310 for CC %d:\t%jd:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_n310[j]);
-	    printf( "\tue_TimersAndConstants_t311 for CC %d:\t%jd:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_t311[j]);
-	    printf( "\tue_TimersAndConstants_n311 for CC %d:\t%jd:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_n311[j]);
+	    printf( "\tue_TimersAndConstants_t300 for CC %d:\t%ld:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_t300[j]);
+	    printf( "\tue_TimersAndConstants_t301 for CC %d:\t%ld:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_t301[j]);
+	    printf( "\tue_TimersAndConstants_t310 for CC %d:\t%ld:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_t310[j]);
+	    printf( "\tue_TimersAndConstants_n310 for CC %d:\t%ld:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_n310[j]);
+	    printf( "\tue_TimersAndConstants_t311 for CC %d:\t%ld:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_t311[j]);
+	    printf( "\tue_TimersAndConstants_n311 for CC %d:\t%ld:\n",j,enb_properties.properties[i]->ue_TimersAndConstants_n311[j]);
  
         }
 	for (j=0; j < enb_properties.properties[i]->num_otg_elements; j++){
-	  printf( "\n\tOTG Destination UE ID:  \t%d", enb_properties.properties[i]->otg_ue_id[j]);
-	  printf( "\n\tOTG App Type:  \t%d", enb_properties.properties[i]->otg_app_type[j]);
+	  printf( "\n\tOTG Destination UE ID:  \t%"PRIu16, enb_properties.properties[i]->otg_ue_id[j]);
+	  printf( "\n\tOTG App Type:  \t%"PRIu8, enb_properties.properties[i]->otg_app_type[j]);
 	  printf( "\n\tOTG Background Traffic:  \t%s\n", (enb_properties.properties[i]->otg_bg_traffic[j]==1) ? "Enabled" : "Disabled");
 	}
 	
