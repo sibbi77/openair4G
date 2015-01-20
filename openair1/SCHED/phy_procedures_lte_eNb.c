@@ -425,7 +425,9 @@ void phy_procedures_emos_eNB_TX(unsigned char next_slot, PHY_VARS_eNB *phy_vars_
   }
 */ 
 
-void phy_procedures_eNB_S_RX(unsigned char sched_subframe,PHY_VARS_eNB *phy_vars_eNB,uint8_t abstraction_flag,relaying_type_t r_type) {
+void phy_procedures_eNB_S_RX(unsigned char sched_subframe,PHY_VARS_eNB *phy_vars_eNB,uint8_t abstraction_flag,relaying_type_t r_type)
+{
+  UNUSED(r_type);
 
   //  unsigned char sect_id=0; 
   int subframe = phy_vars_eNB->proc[sched_subframe].subframe_rx;
@@ -1458,11 +1460,11 @@ void phy_procedures_eNB_TX(unsigned char sched_subframe,PHY_VARS_eNB *phy_vars_e
 					 P_RNTI,
 					 phy_vars_eNB->eNB_UE_stats[0].DL_pmi_single);
       
-      if ((phy_vars_eNB->dlsch_eNB_SI->nCCE[subframe] = get_nCCE_offset(1<<DCI_pdu->dci_alloc[i].L,
-									DCI_pdu->nCCE,
-									1,
-									SI_RNTI,
-									subframe)) == -1) {
+
+      int result = get_nCCE_offset(1<<DCI_pdu->dci_alloc[i].L, DCI_pdu->nCCE, 1, SI_RNTI, subframe);
+      phy_vars_eNB->dlsch_eNB_SI->nCCE[subframe] = result;
+      if (result == -1) {
+        // FIXME what happens to phy_vars_eNB->dlsch_eNB_SI->nCCE[subframe]?
         LOG_E(PHY,"[eNB %"PRIu8"] Frame %d subframe %d : No available CCE resources for common DCI (SI)!!!\n",phy_vars_eNB->Mod_id,phy_vars_eNB->proc[sched_subframe].frame_tx,subframe);
       } 
       else {
@@ -1498,11 +1500,10 @@ void phy_procedures_eNB_TX(unsigned char sched_subframe,PHY_VARS_eNB *phy_vars_e
 	  
       //	  mac_xface->macphy_exit("Transmitted RAR, exiting\n");
 
-      if ((phy_vars_eNB->dlsch_eNB_ra->nCCE[subframe] = get_nCCE_offset(1<<DCI_pdu->dci_alloc[i].L,
-									DCI_pdu->nCCE,
-									1,
-									DCI_pdu->dci_alloc[i].rnti,
-									subframe)) == -1) {
+      int result = get_nCCE_offset(1<<DCI_pdu->dci_alloc[i].L, DCI_pdu->nCCE, 1, DCI_pdu->dci_alloc[i].rnti, subframe);
+      phy_vars_eNB->dlsch_eNB_ra->nCCE[subframe] = result;
+      if (result == -1) {
+        // FIXME what happens to phy_vars_eNB->dlsch_eNB_ra->nCCE[subframe]?
         LOG_E(PHY,"[eNB %"PRIu8"] Frame %d subframe %d : No available CCE resources for common DCI (RA) !!!\n",phy_vars_eNB->Mod_id,phy_vars_eNB->proc[sched_subframe].frame_tx,subframe);
       }
       else {
@@ -1553,11 +1554,11 @@ void phy_procedures_eNB_TX(unsigned char sched_subframe,PHY_VARS_eNB *phy_vars_e
 					   phy_vars_eNB->eNB_UE_stats[(uint8_t)UE_id].DL_pmi_single);
         LOG_D(PHY,"[eNB %"PRIu8"][PDSCH %"PRIx16"/%"PRIu8"] Frame %d subframe %d: Generated dlsch params\n",
               phy_vars_eNB->Mod_id,DCI_pdu->dci_alloc[i].rnti,phy_vars_eNB->dlsch_eNB[(uint8_t)UE_id][0]->current_harq_pid,phy_vars_eNB->proc[sched_subframe].frame_tx,subframe);
-	if ((phy_vars_eNB->dlsch_eNB[(uint8_t)UE_id][0]->nCCE[subframe] = get_nCCE_offset(1<<DCI_pdu->dci_alloc[i].L,
-											  DCI_pdu->nCCE,
-											  0,
-											  DCI_pdu->dci_alloc[i].rnti,
-											  subframe)) == -1) {
+
+        int result = get_nCCE_offset(1<<DCI_pdu->dci_alloc[i].L, DCI_pdu->nCCE, 0, DCI_pdu->dci_alloc[i].rnti, subframe);
+        phy_vars_eNB->dlsch_eNB[(uint8_t)UE_id][0]->nCCE[subframe] = result;
+        if (result == -1) {
+          // FIXME what happens to phy_vars_eNB->dlsch_eNB[(uint8_t)UE_id][0]->nCCE[subframe]?
           LOG_E(PHY,"[eNB %"PRIu8"] Frame %d subframe %d : No available CCE resources for UE spec DCI (PDSCH %"PRIx16") !!!\n",
 		phy_vars_eNB->Mod_id,phy_vars_eNB->proc[sched_subframe].frame_tx,subframe,DCI_pdu->dci_alloc[i].rnti);
 	}
@@ -2158,7 +2159,7 @@ void process_Msg3(PHY_VARS_eNB *phy_vars_eNB,uint8_t sched_subframe,uint8_t UE_i
   
   if ((phy_vars_eNB->ulsch_eNB[(uint32_t)UE_id]->Msg3_active == 1) && 
       (phy_vars_eNB->ulsch_eNB[(uint32_t)UE_id]->Msg3_subframe == subframe) &&
-      (phy_vars_eNB->ulsch_eNB[(uint32_t)UE_id]->Msg3_frame == frame))   {
+      (phy_vars_eNB->ulsch_eNB[(uint32_t)UE_id]->Msg3_frame == (uint32_t)frame))   {
     
     //    harq_pid = 0;
     
@@ -2665,13 +2666,19 @@ void prach_procedures(PHY_VARS_eNB *phy_vars_eNB,uint8_t sched_subframe,uint8_t 
 
 void ulsch_decoding_procedures(unsigned char subframe, unsigned int i, PHY_VARS_eNB *phy_vars_eNB, unsigned char abstraction_flag)
 {
+  UNUSED(subframe);
+  UNUSED(i);
+  UNUSED(phy_vars_eNB);
+  UNUSED(abstraction_flag);
   LOG_D(PHY,"ulsch_decoding_procedures not yet implemented. should not be called");
 }
 
 
 
-void phy_procedures_eNB_RX(unsigned char sched_subframe,PHY_VARS_eNB *phy_vars_eNB,uint8_t abstraction_flag,relaying_type_t r_type) {
+void phy_procedures_eNB_RX(unsigned char sched_subframe,PHY_VARS_eNB *phy_vars_eNB,uint8_t abstraction_flag,relaying_type_t r_type)
+{
   //RX processing
+  UNUSED(r_type);
   uint32_t l, ret=0,i,j,k;
   uint32_t sect_id=0;
   uint32_t harq_pid, harq_idx, round;
