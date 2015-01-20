@@ -1192,53 +1192,53 @@ void phy_procedures_eNB_TX(unsigned char sched_subframe,PHY_VARS_eNB *phy_vars_e
 
   if (subframe == 0) {
     if ((phy_vars_eNB->proc[sched_subframe].frame_tx&3) == 0) {
-      ((uint8_t*) pbch_pdu)[2] = 0;
+      pbch_pdu[2] = 0;
       switch (phy_vars_eNB->lte_frame_parms.N_RB_DL) {
       case 6:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0x1f) | (0<<5);
+        pbch_pdu[2] = (pbch_pdu[2]&0x1f) | (0<<5);
 	break;
       case 15:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0x1f) | (1<<5);
+        pbch_pdu[2] = (pbch_pdu[2]&0x1f) | (1<<5);
 	break;
       case 25:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0x1f) | (2<<5);
+        pbch_pdu[2] = (pbch_pdu[2]&0x1f) | (2<<5);
 	break;
       case 50:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0x1f) | (3<<5);
+        pbch_pdu[2] = (pbch_pdu[2]&0x1f) | (3<<5);
 	break;
       case 75:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0x1f) | (4<<5);
+        pbch_pdu[2] = (pbch_pdu[2]&0x1f) | (4<<5);
 	break;
       case 100:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0x1f) | (5<<5);
+        pbch_pdu[2] = (pbch_pdu[2]&0x1f) | (5<<5);
 	break;
       default:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0x1f) | (2<<5);
+        pbch_pdu[2] = (pbch_pdu[2]&0x1f) | (2<<5);
 	break;
       }
-      ((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0xef) | 
+      pbch_pdu[2] = (pbch_pdu[2]&0xef) |
 	((phy_vars_eNB->lte_frame_parms.phich_config_common.phich_duration << 4)&0x10);
 	
       switch (phy_vars_eNB->lte_frame_parms.phich_config_common.phich_resource) {
       case oneSixth:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0xf3) | (0<<2);
+        pbch_pdu[2] = (pbch_pdu[2]&0xf3) | (0<<2);
 	break;
       case half:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0xf3) | (1<<2);
+        pbch_pdu[2] = (pbch_pdu[2]&0xf3) | (1<<2);
 	break;
       case one:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0xf3) | (2<<2);
+        pbch_pdu[2] = (pbch_pdu[2]&0xf3) | (2<<2);
 	break;
       case two:
-	((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0xf3) | (3<<2);
+        pbch_pdu[2] = (pbch_pdu[2]&0xf3) | (3<<2);
 	break;
       default:
 	break;
       }
 	
-      ((uint8_t*) pbch_pdu)[2] = (((uint8_t*) pbch_pdu)[2]&0xfc) | ((phy_vars_eNB->proc[sched_subframe].frame_tx>>8)&0x3);
-      ((uint8_t*) pbch_pdu)[1] = phy_vars_eNB->proc[sched_subframe].frame_tx&0xfc;
-      ((uint8_t*) pbch_pdu)[0] = 0;
+      pbch_pdu[2] = (pbch_pdu[2]&0xfc) | ((phy_vars_eNB->proc[sched_subframe].frame_tx>>8)&0x3);
+      pbch_pdu[1] = phy_vars_eNB->proc[sched_subframe].frame_tx&0xfc;
+      pbch_pdu[0] = 0;
     }
     /// First half of SSS (TDD)
     if (abstraction_flag==0) {
