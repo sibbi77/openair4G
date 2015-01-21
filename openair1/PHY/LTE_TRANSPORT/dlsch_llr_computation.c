@@ -1061,7 +1061,7 @@ length = number of resource elements
     
         // Compute the terms for the LLR of first bit
     
-        xmm0 = _mm_xor_si128(xmm0,xmm0); // ZERO
+        xmm0 = _mm_setzero_si128(); // ZERO
     
         // 1 term for numerator of LLR
         xmm3 = _mm_subs_epi16(y1r_over2,rho_rpi);
@@ -1305,7 +1305,7 @@ length = number of resource elements
         y1r = _mm_unpacklo_epi64(xmm0,xmm1); //[y1r(1),y1r(2),y1r(3),y1r(4)]
         y1i = _mm_unpackhi_epi64(xmm0,xmm1); //[y1i(1),y1i(2),y1i(3),y1i(4)]
     
-        xmm0 = _mm_xor_si128(xmm0,xmm0); // ZERO
+        xmm0 = _mm_setzero_si128(); // ZERO
     
         // compute psi
         xmm3 = _mm_subs_epi16(y1r,rho_rpi);
@@ -1569,7 +1569,7 @@ length = number of resource elements
         y1r = _mm_unpacklo_epi64(xmm0,xmm1); //[y1r(1),y1r(2),y1r(3),y1r(4)]
         y1i = _mm_unpackhi_epi64(xmm0,xmm1); //[y1i(1),y1i(2),y1i(3),y1i(4)]
     
-        xmm0 = _mm_xor_si128(xmm0,xmm0); // ZERO
+        xmm0 = _mm_setzero_si128(); // ZERO
     
         // compute psi
         xmm3 = _mm_subs_epi16(y1r,rho_rpi);
@@ -1780,7 +1780,7 @@ void qam16_qpsk(short *stream0_in,
         y1r = _mm_unpacklo_epi64(xmm0,xmm1); //[y1r(1),y1r(2),y1r(3),y1r(4)]
         y1i = _mm_unpackhi_epi64(xmm0,xmm1); //[y1i(1),y1i(2),y1i(3),y1i(4)]
 
-        xmm0 = _mm_xor_si128(xmm0,xmm0); // ZERO
+        xmm0 = _mm_setzero_si128(); // ZERO
         xmm2 = _mm_subs_epi16(rho_rpi_1_1,y1r); // = [Re(rho)+ Im(rho)]/sqrt(10) - y1r
         psi_r_p1_p1 = _mm_abs_epi16(xmm2); // = |[Re(rho)+ Im(rho)]/sqrt(10) - y1r|
 
@@ -2237,7 +2237,7 @@ void qam16_qam16(short *stream0_in,
         y1r = _mm_unpacklo_epi64(xmm0,xmm1); //[y1r(1),y1r(2),y1r(3),y1r(4)]
         y1i = _mm_unpackhi_epi64(xmm0,xmm1); //[y1i(1),y1i(2),y1i(3),y1i(4)]
 
-        xmm0 = _mm_xor_si128(xmm0,xmm0); // ZERO
+        xmm0 = _mm_setzero_si128(); // ZERO
         xmm2 = _mm_subs_epi16(rho_rpi_1_1,y1r); // = [Re(rho)+ Im(rho)]/sqrt(10) - y1r
         psi_r_p1_p1 = _mm_abs_epi16(xmm2); // = |[Re(rho)+ Im(rho)]/sqrt(10) - y1r|
 
@@ -2748,7 +2748,7 @@ void qam16_qam64(short *stream0_in,
         y1r = _mm_unpacklo_epi64(xmm0,xmm1); //[y1r(1),y1r(2),y1r(3),y1r(4)]
         y1i = _mm_unpackhi_epi64(xmm0,xmm1); //[y1i(1),y1i(2),y1i(3),y1i(4)]
 
-        xmm0 = _mm_xor_si128(xmm0,xmm0); // ZERO
+        xmm0 = _mm_setzero_si128(); // ZERO
         xmm2 = _mm_subs_epi16(rho_rpi_1_1,y1r); // = [Re(rho)+ Im(rho)]/sqrt(10) - y1r
         psi_r_p1_p1 = _mm_abs_epi16(xmm2); // = |[Re(rho)+ Im(rho)]/sqrt(10) - y1r|
 
@@ -3357,7 +3357,7 @@ void qam64_qpsk(short *stream0_in,
         y1i = _mm_unpackhi_epi64(xmm0,xmm1); //[y1i(1),y1i(2),y1i(3),y1i(4)]
 
         // Psi_r calculation from rho_rpi or rho_rmi
-        xmm0 = _mm_xor_si128(xmm0, xmm0); // ZERO for abs_pi16
+        xmm0 = _mm_setzero_si128(); // ZERO for abs_pi16
         xmm2 = _mm_subs_epi16(rho_rpi_7_7, y1r); psi_r_p7_p7 = _mm_abs_epi16(xmm2);
         xmm2 = _mm_subs_epi16(rho_rpi_7_5, y1r); psi_r_p7_p5 = _mm_abs_epi16(xmm2);
         xmm2 = _mm_subs_epi16(rho_rpi_7_3, y1r); psi_r_p7_p3 = _mm_abs_epi16(xmm2);
@@ -4669,7 +4669,7 @@ void qam64_qam16(short *stream0_in,
         y1i = _mm_unpackhi_epi64(xmm0,xmm1); //[y1i(1),y1i(2),y1i(3),y1i(4)]
 
         // Psi_r calculation from rho_rpi or rho_rmi
-        xmm0 = _mm_xor_si128(xmm0, xmm0); // ZERO for abs_pi16
+        xmm0 = _mm_setzero_si128(); // ZERO for abs_pi16
         xmm2 = _mm_subs_epi16(rho_rpi_7_7, y1r); psi_r_p7_p7 = _mm_abs_epi16(xmm2);
         xmm2 = _mm_subs_epi16(rho_rpi_7_5, y1r); psi_r_p7_p5 = _mm_abs_epi16(xmm2);
         xmm2 = _mm_subs_epi16(rho_rpi_7_3, y1r); psi_r_p7_p3 = _mm_abs_epi16(xmm2);
@@ -5924,7 +5924,7 @@ void qam64_qam64(short *stream0_in,
         y1i = _mm_unpackhi_epi64(xmm0,xmm1); //[y1i(1),y1i(2),y1i(3),y1i(4)]
 
         // Psi_r calculation from rho_rpi or rho_rmi
-        xmm0 = _mm_xor_si128(xmm0, xmm0); // ZERO for abs_pi16
+        xmm0 = _mm_setzero_si128(); // ZERO for abs_pi16
         xmm2 = _mm_subs_epi16(rho_rpi_7_7, y1r); psi_r_p7_p7 = _mm_abs_epi16(xmm2);
         xmm2 = _mm_subs_epi16(rho_rpi_7_5, y1r); psi_r_p7_p5 = _mm_abs_epi16(xmm2);
         xmm2 = _mm_subs_epi16(rho_rpi_7_3, y1r); psi_r_p7_p3 = _mm_abs_epi16(xmm2);

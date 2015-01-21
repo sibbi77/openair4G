@@ -110,7 +110,7 @@ int rx_pdsch(PHY_VARS_UE *phy_vars_ue,
   unsigned char aatx,aarx;    
   unsigned short nb_rb;
   int avgs, rb;  
-  LTE_DL_UE_HARQ_t *dlsch0_harq,*dlsch1_harq;
+  LTE_DL_UE_HARQ_t *dlsch0_harq,*dlsch1_harq = 0;
 
   switch (type) {
   case SI_PDSCH:
@@ -815,7 +815,7 @@ void dlsch_channel_compensation(int **rxdataF_ext,
   for (aatx=0;aatx<frame_parms->nb_antennas_tx_eNB;aatx++) {
     if (mod_order == 4) {
       QAM_amp128 = _mm_set1_epi16(QAM16_n1);  // 2/sqrt(10)
-      QAM_amp128b = _mm_xor_si128(QAM_amp128b,QAM_amp128b);
+      QAM_amp128b = _mm_setzero_si128();
     }    
     else if (mod_order == 6) {
       QAM_amp128  = _mm_set1_epi16(QAM64_n1); // 
@@ -1188,7 +1188,7 @@ void dlsch_channel_compensation_TM56(int **rxdataF_ext,
 
   if (mod_order == 4) {
     QAM_amp128 = _mm_set1_epi16(QAM16_n1);
-    QAM_amp128b = _mm_xor_si128(QAM_amp128b,QAM_amp128b);
+    QAM_amp128b = _mm_setzero_si128();
   }
   else if (mod_order == 6) {
     QAM_amp128  = _mm_set1_epi16(QAM64_n1);
@@ -1404,7 +1404,7 @@ void dlsch_channel_compensation_TM3(LTE_DL_FRAME_PARMS *frame_parms,
 
   if (mod_order0 == 4) {
     QAM_amp0_128  = _mm_set1_epi16(QAM16_n1);
-    QAM_amp0_128b = _mm_xor_si128(QAM_amp0_128b,QAM_amp0_128b);
+    QAM_amp0_128b = _mm_setzero_si128();
   }
   else if (mod_order0 == 6) {
     QAM_amp0_128  = _mm_set1_epi16(QAM64_n1);
@@ -1412,7 +1412,7 @@ void dlsch_channel_compensation_TM3(LTE_DL_FRAME_PARMS *frame_parms,
   }
   if (mod_order1 == 4) {
     QAM_amp1_128  = _mm_set1_epi16(QAM16_n1);
-    QAM_amp1_128b = _mm_xor_si128(QAM_amp1_128b,QAM_amp1_128b);
+    QAM_amp1_128b = _mm_setzero_si128();
   }
   else if (mod_order1 == 6) {
     QAM_amp1_128  = _mm_set1_epi16(QAM64_n1);
@@ -1949,7 +1949,7 @@ void dlsch_channel_level(int **dl_ch_estimates_ext,
   for (aatx=0;aatx<frame_parms->nb_antennas_tx_eNB;aatx++)
     for (aarx=0;aarx<frame_parms->nb_antennas_rx;aarx++) {
       //clear average level
-      avg128D = _mm_xor_si128(avg128D,avg128D);
+      avg128D = _mm_setzero_si128();
       // 5 is always a symbol with no pilots for both normal and extended prefix
 
       dl_ch128=(__m128i *)&dl_ch_estimates_ext[(aatx<<1)+aarx][symbol*frame_parms->N_RB_DL*12];
@@ -2008,7 +2008,7 @@ void dlsch_channel_level_TM3(int **dl_ch_estimates_ext,
   symbol_mod = (symbol>=(7-frame_parms->Ncp)) ? symbol-(7-frame_parms->Ncp) : symbol;
 
   //clear average level
-  avg128D = _mm_xor_si128(avg128D,avg128D);
+  avg128D = _mm_setzero_si128();
   avg[0] = 0;
   avg[1] = 0;
   // 5 is always a symbol with no pilots for both normal and extended prefix
@@ -2083,7 +2083,7 @@ void dlsch_channel_level_TM56(int **dl_ch_estimates_ext,
   symbol_mod = (symbol>=(7-frame_parms->Ncp)) ? symbol-(7-frame_parms->Ncp) : symbol;
 
   //clear average level
-  avg128D = _mm_xor_si128(avg128D,avg128D);
+  avg128D = _mm_setzero_si128();
   avg[0] = 0;
   avg[1] = 0;
   // 5 is always a symbol with no pilots for both normal and extended prefix
