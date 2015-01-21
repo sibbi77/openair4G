@@ -37,27 +37,18 @@
 * \note
 * \warning
 */
-#include <emmintrin.h>
-#include <xmmintrin.h>
-#ifdef __SSE3__
-#include <pmmintrin.h>
-#include <tmmintrin.h>
-#endif
 #include "PHY/defs.h"
 #include "PHY/CODING/extern.h"
 #include "PHY/CODING/lte_interleaver_inline.h"
 #include "defs.h"
 #include "extern.h"
 #include "PHY/extern.h"
+#include "PHY/sse_intrin.h"
 
 #ifdef PHY_ABSTRACTION
 #include "SIMULATION/TOOLS/defs.h"
 #endif 
 
-#ifndef __SSE3__
-#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmx)))
-#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmy)))
-#endif
   
 //#define DEBUG_PBCH 1
 //#define DEBUG_PBCH_ENCODING

@@ -33,17 +33,7 @@
 #include "SCHED/defs.h"
 #include "SCHED/extern.h"
 #include "log.h"
-
-#include "emmintrin.h"
-
-#ifdef __SSE3__
-#include "pmmintrin.h"
-#include "tmmintrin.h"
-#else
-__m128i zeroPMI;
-#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(zeroPMI,(xmmx)))
-#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(zeroPMI,(xmmy)))
-#endif
+#include "PHY/sse_intrin.h"
 
 //#define k1 1000
 #define k1 ((long long int) 1000)

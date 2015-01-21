@@ -38,27 +38,11 @@
 * \warning
 */
 
-#ifdef __SSE2__
-#include <emmintrin.h>
-#include <xmmintrin.h>
-#endif
-#ifdef __SSE3__
-#include <pmmintrin.h>
-#include <tmmintrin.h>
-#endif
-#ifdef __SSE4_1__
-#include <smmintrin.h>
-#endif
 #include "PHY/defs.h"
 #include "PHY/extern.h"
 #include "defs.h"
 #include "extern.h"
-
-#ifndef __SSE3__
-//#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(zero,(xmmx)))
-//abs_#define _mm_abs_epi16(xmmx) _mm_add_epi16(_mm_xor_si128((xmmx),_mm_cmpgt_epi16((*(__m128i*)&zero[0]),(xmmx))),_mm_srli_epi16(_mm_cmpgt_epi16((*(__m128i*)&zero[0]),(xmmx)),15))
-//#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(zero,(xmmy)))
-#endif
+#include "PHY/sse_intrin.h"
 
 #ifndef USER_MODE
 #define NOCYGWIN_STATIC static
