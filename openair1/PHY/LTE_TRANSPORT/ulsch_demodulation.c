@@ -60,9 +60,8 @@
 //extern int **ulchmag_eren;
 //eren
 #ifndef __SSE3__
-__m128i zeroU;
-#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(zeroU,(xmmx)))
-#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(zeroU,(xmmy)))
+#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmx)))
+#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmy)))
 #endif
 
 
@@ -661,10 +660,6 @@ void ulsch_channel_compensation(int32_t **rxdataF_ext,
 #endif
   //  symbol_mod = (symbol>=(7-frame_parms->Ncp)) ? symbol-(7-frame_parms->Ncp) : symbol;
 
-#ifndef __SSE3__
-  zeroU = _mm_xor_si128(zeroU,zeroU);
-#endif
-
   //    printf("comp: symbol %d\n",symbol);
 
 #ifdef ULSCH_OFDMA  
@@ -861,10 +856,6 @@ void ulsch_channel_compensation_alamouti(int32_t **rxdataF_ext,                 
   __m128i mmtmpU0,mmtmpU1,mmtmpU2,mmtmpU3;
 
   //  symbol_mod = (symbol>=(7-frame_parms->Ncp)) ? symbol-(7-frame_parms->Ncp) : symbol;
-
-#ifndef __SSE3__
-  zeroU = _mm_xor_si128(zeroU,zeroU);
-#endif
 
   //    printf("comp: symbol %d\n",symbol);
 

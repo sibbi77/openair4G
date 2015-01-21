@@ -62,9 +62,8 @@
 //#undef ALL_AGGREGATION
 
 #ifndef __SSE3__
-__m128i zero2;
-#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(zero2,(xmmx)))
-#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(zero2,(xmmy)))
+#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmx)))
+#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmy)))
 #endif
 
 //extern uint16_t phich_reg[MAX_NUM_PHICH_GROUPS][3];
@@ -1272,9 +1271,6 @@ void pdcch_channel_compensation(int32_t **rxdataF_ext,
 
 
 
-#ifndef __SSE3__
-  zero2 = _mm_xor_si128(zero2,zero2);
-#endif
 
 #ifdef DEBUG_DCI_DECODING
   msg("[PHY] PDCCH comp: symbol %d\n",symbol);
