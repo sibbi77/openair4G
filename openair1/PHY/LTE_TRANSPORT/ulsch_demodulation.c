@@ -1219,7 +1219,7 @@ void ulsch_channel_level(int32_t **drs_ch_estimates_ext,
 
   for (aarx=0;aarx<frame_parms->nb_antennas_rx;aarx++) {
     //clear average level
-    avg128U = _mm_xor_si128(avg128U,avg128U);
+    avg128U = _mm_setzero_si128();
     ul_ch128=(__m128i *)drs_ch_estimates_ext[aarx];
 
     for (rb=0;rb<nb_rb;rb++) {

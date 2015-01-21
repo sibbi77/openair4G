@@ -375,7 +375,7 @@ void mch_channel_level(int **dl_ch_estimates_ext,
   
   for (aarx=0;aarx<frame_parms->nb_antennas_rx;aarx++) {
     //clear average level
-    avg128 = _mm_xor_si128(avg128,avg128);
+    avg128 = _mm_setzero_si128();
     // 5 is always a symbol with no pilots for both normal and extended prefix
     
     dl_ch128=(__m128i *)&dl_ch_estimates_ext[aarx][symbol*frame_parms->N_RB_DL*12];

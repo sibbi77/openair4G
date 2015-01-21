@@ -636,7 +636,7 @@ void pdcch_channel_level(int32_t **dl_ch_estimates_ext,
   for (aatx=0;aatx<frame_parms->nb_antennas_tx_eNB;aatx++)
     for (aarx=0;aarx<frame_parms->nb_antennas_rx;aarx++) {
       //clear average level
-      avg128P = _mm_xor_si128(avg128P,avg128P);
+      avg128P = _mm_setzero_si128();
       dl_ch128=(__m128i *)&dl_ch_estimates_ext[(aatx<<1)+aarx][frame_parms->N_RB_DL*12];
 
       for (rb=0;rb<nb_rb;rb++) {
