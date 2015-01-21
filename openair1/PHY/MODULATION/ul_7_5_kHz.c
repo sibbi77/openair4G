@@ -26,14 +26,6 @@
   Address      : Eurecom, Campus SophiaTech, 450 Route des Chappes, CS 50193 - 06904 Biot Sophia Antipolis cedex, FRANCE
 
  *******************************************************************************/
-#ifdef __SSE2__
-#include <emmintrin.h>
-#include <xmmintrin.h>
-#endif
-#ifdef __SSE3__
-#include <pmmintrin.h>
-#include <tmmintrin.h>
-#endif
 #include "PHY/defs.h"
 #include "PHY/extern.h"
 #include "extern.h"
@@ -44,10 +36,8 @@
 #else
 #include "rtai_math.h"
 #endif
-#ifndef __SSE3__
-#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmx)))
-#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmy)))
-#endif
+#include "PHY/sse_intrin.h"
+
 short conjugate75[8]__attribute__((aligned(16))) = {-1,1,-1,1,-1,1,-1,1} ;
 short conjugate75_2[8]__attribute__((aligned(16))) = {1,-1,1,-1,1,-1,1,-1} ;
 short negate[8]__attribute__((aligned(16))) = {-1,-1,-1,-1,-1,-1,-1,-1};

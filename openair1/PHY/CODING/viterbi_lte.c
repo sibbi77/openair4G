@@ -50,7 +50,7 @@
 #endif
 
 #ifndef EXPRESSMIMO_TARGET
-#include "emmintrin.h"
+#include "PHY/sse_intrin.h"
 #endif //EXPRESSMIMO_TARGET
 
 extern uint8_t ccodelte_table[128],ccodelte_table_rev[128];

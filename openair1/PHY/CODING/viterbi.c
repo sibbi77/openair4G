@@ -34,7 +34,7 @@
 
 
 #ifndef EXPRESSMIMO_TARGET
-#include "emmintrin.h"
+#include "PHY/sse_intrin.h"
 #endif //EXPRESSMIMO_TARGET
 
 extern unsigned char ccodedot11_table[128],ccodedot11_table_rev[128];

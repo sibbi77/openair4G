@@ -37,14 +37,7 @@
  * \note
  * \warning
  */
-#ifdef __SSE2__
-#include <emmintrin.h>
-#include <xmmintrin.h>
-#endif
-#ifdef __SSE3__
-#include <pmmintrin.h>
-#include <tmmintrin.h>
-#endif
+#include "PHY/sse_intrin.h"
 #include "PHY/defs.h"
 #include "PHY/extern.h"
 //#include "prach.h"

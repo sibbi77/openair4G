@@ -38,15 +38,6 @@
 * \warning
 */
 
-#include <emmintrin.h>
-#include <xmmintrin.h>
-#ifdef __SSE4_1__
-#include <smmintrin.h>
-#endif
-#ifdef __SSE3__
-#include <pmmintrin.h>
-#include <tmmintrin.h>
-#endif
 #include "PHY/defs.h"
 #include "PHY/extern.h"
 #include "MAC_INTERFACE/defs.h"
@@ -54,15 +45,12 @@
 #include "defs.h"
 #include "extern.h"
 //#define DEBUG_ULSCH
+#include "PHY/sse_intrin.h"
 
 //extern char* namepointer_chMag ;
 //eren
 //extern int **ulchmag_eren;
 //eren
-#ifndef __SSE3__
-#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmx)))
-#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmy)))
-#endif
 
 
 static short jitter[8]  __attribute__ ((aligned(16))) = {1,0,0,1,0,1,1,0};
@@ -501,7 +489,6 @@ void ulsch_64qam_llr(LTE_DL_FRAME_PARMS *frame_parms,
     mmtmpU2 = _mm_abs_epi16(mmtmpU1);
     mmtmpU2 = _mm_subs_epi16(ch_magb[i],mmtmpU2);
 
-#ifdef __SSE4_1__
     (*llrp32)[0]  = _mm_extract_epi32(rxF[i],0);
     (*llrp32)[1]  = _mm_extract_epi32(mmtmpU1,0);
     (*llrp32)[2]  = _mm_extract_epi32(mmtmpU2,0);
@@ -514,7 +501,6 @@ void ulsch_64qam_llr(LTE_DL_FRAME_PARMS *frame_parms,
     (*llrp32)[9]  = _mm_extract_epi32(rxF[i],3);
     (*llrp32)[10] = _mm_extract_epi32(mmtmpU1,3);
     (*llrp32)[11] = _mm_extract_epi32(mmtmpU2,3);
-#endif    
     (*llrp32)+=12;
   }
 

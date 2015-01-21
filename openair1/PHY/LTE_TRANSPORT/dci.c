@@ -46,12 +46,7 @@
 #include "PHY/extern.h"
 #include "SCHED/defs.h"
 #include "SIMULATION/TOOLS/defs.h" // for taus 
-#include <emmintrin.h>
-#include <xmmintrin.h>
-#ifdef __SSE3__
-#include <pmmintrin.h>
-#include <tmmintrin.h>
-#endif
+#include "PHY/sse_intrin.h"
 
 #include "assertions.h"
 
@@ -60,11 +55,6 @@
 //#define DEBUG_PHY
  
 //#undef ALL_AGGREGATION
-
-#ifndef __SSE3__
-#define _mm_abs_epi16(xmmx) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmx)))
-#define _mm_sign_epi16(xmmx,xmmy) _mm_xor_si128((xmmx),_mm_cmpgt_epi16(_mm_setzero_si128(),(xmmy)))
-#endif
 
 //extern uint16_t phich_reg[MAX_NUM_PHICH_GROUPS][3];
 //extern uint16_t pcfich_reg[4];
