@@ -42,6 +42,7 @@ endif
 ifdef DEBUG
 DISABLE_XER_PRINT=0
 MSG_PRINT=1
+CFLAGS += -Wextra
 endif
 
 ifndef OPENAIR_EMU
@@ -346,6 +347,10 @@ oaisim: $(OAISIM_COMPILED_OBJECTS) $(SHARED_DEPENDENCIES)
 	@echo "Linking oaisim ..."
 	@$(CC) $(INCLUDES) $(S1AP_Incl) $(X2AP_Incl) -o oaisim $(CFLAGS) $(EXTRA_CFLAGS) $(OAISIM_COMPILED_OBJECTS) \
 	-lpthread -llapack_atlas -lforms -lrt -lconfig $(LIBS) $(DB_LDFLAGS)
+
+cppcheck:
+	@echo "cppcheck oaisim ..."
+	cppcheck $(INCLUDES) ${OBJ:.o=.c} ${OAISIM_OBJS,.o=.c} ${ASN1_RRC_MSG_OBJS1,.o=.c}
 
 ifeq ($(rrc_cellular_eNB),1)
 	mv oaisim oaisim_eNB
