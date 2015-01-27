@@ -1714,7 +1714,6 @@ sigh (void *arg) {
 void
 oai_shutdown (void) {
     static int done = 0;
-    int i;
 
     if (done)
         return;
@@ -1758,7 +1757,7 @@ oai_shutdown (void) {
          #endif
          */
 
-        for (i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             free (s_re[i]);
             free (s_im[i]);
             free (r_re[i]);
@@ -1810,7 +1809,7 @@ oai_shutdown (void) {
     if (oai_emulation.info.cli_enabled)
         cli_server_cleanup ();
 
-    for (i = 0; i < NUMBER_OF_eNB_MAX + NUMBER_OF_UE_MAX; i++)
+    for (int i = 0; i < NUMBER_OF_eNB_MAX + NUMBER_OF_UE_MAX; i++)
         if (oai_emulation.info.oai_ifup[i] == 1) {
             char interfaceName[8];
             snprintf (interfaceName, sizeof(interfaceName), "oai%d", i);
