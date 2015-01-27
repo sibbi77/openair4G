@@ -145,10 +145,8 @@ extern double snr_step;
 extern uint8_t set_sinr;
 extern uint8_t ue_connection_test;
 extern uint8_t set_seed;
-uint8_t cooperation_flag; // for cooperative communication
 extern uint8_t target_dl_mcs;
 extern uint8_t target_ul_mcs;
-uint8_t rate_adaptation_flag;
 extern uint8_t abstraction_flag;
 extern uint8_t ethernet_flag;
 extern uint16_t Nid_cell;
@@ -602,14 +600,6 @@ l2l1_task (void *args_p) {
         if (oai_emulation.info.oeh_enabled == 1)
             execute_events (frame);
 
-        /*
-         // Handling the cooperation Flag
-         if (cooperation_flag == 2)
-         {
-         if ((PHY_vars_eNB_g[0]->eNB_UE_stats[0].mode == PUSCH) && (PHY_vars_eNB_g[0]->eNB_UE_stats[1].mode == PUSCH))
-         PHY_vars_eNB_g[0]->cooperation_flag = 2;
-         }
-         */
         if (ue_connection_test == 1) {
             if ((frame % 20) == 0) {
                 snr_dB += snr_direction;
@@ -1181,11 +1171,9 @@ main (int argc, char **argv) {
     int port,Process_Flag=0,wgt,Channel_Flag=0,temp;
 #endif
     //default parameters
-    rate_adaptation_flag = 0;
     oai_emulation.info.n_frames = 0xffff; //1024;          //10;
     oai_emulation.info.n_frames_flag = 0; //fixme
     snr_dB = 30;
-    cooperation_flag = 0; // default value 0 for no cooperation, 1 for Delay diversity, 2 for Distributed Alamouti
 
     //Default values if not changed by the user in get_simulation_options();
     pdcp_period = 1;
