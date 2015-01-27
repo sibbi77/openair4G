@@ -70,6 +70,7 @@
 #endif
 
 #ifdef SMBV
+// Rohde&Schwarz SMBV100A vector signal generator
 #include "PHY/TOOLS/smbv.h"
 char smbv_fname[] = "smbv_config_file.smbv";
 unsigned short smbv_nframes = 4; // how many frames to configure 1,..,4
@@ -230,7 +231,11 @@ help (void) {
     printf ("-U Set the mobility model for UE, options are: STATIC, RWP, RWALK\n");
     printf ("-V [vcd_file] Enable VCD dump into vcd_file\n");
     printf ("-w number of CBA groups, if not specified or zero, CBA is inactive\n");
-    printf ("-W IP address to connect to SMBV and configure SMBV from config file. Requires compilation with SMBV=1, -W0 uses default IP 192.168.12.201\n");
+#ifdef SMBV
+    printf ("-W IP address to connect to Rohde&Schwarz SMBV100A and configure SMBV from config file. -W0 uses default IP 192.168.12.201\n");
+#else
+    printf ("-W [Rohde&Schwarz SMBV100A functions disabled. Recompile with SMBV=1]\n");
+#endif
     printf ("-x Set the transmission mode (1,2,5,6 supported for now)\n");
     printf ("-Y Set the global log verbosity (none, low, medium, high, full) \n");
     printf ("-z Set the cooperation flag (0 for no cooperation, 1 for delay diversity and 2 for distributed alamouti\n");
@@ -1124,6 +1129,7 @@ l2l1_task (void *args_p) {
 #endif
 
 #ifdef SMBV
+        // Rohde&Schwarz SMBV100A vector signal generator
         if ((frame == config_frames[0]) || (frame == config_frames[1]) || (frame == config_frames[2]) || (frame == config_frames[3])) {
             smbv_frame_cnt++;
         }
@@ -1167,6 +1173,7 @@ main (int argc, char **argv) {
     clock_t t;
 
 #ifdef SMBV
+    // Rohde&Schwarz SMBV100A vector signal generator
     strcpy(smbv_ip,DEFAULT_SMBV_IP);
 #endif
 
@@ -1245,6 +1252,7 @@ main (int argc, char **argv) {
     init_ocm ();
 
 #ifdef SMBV
+    // Rohde&Schwarz SMBV100A vector signal generator
     smbv_init_config(smbv_fname, smbv_nframes);
     smbv_write_config_from_frame_parms(smbv_fname, &PHY_vars_eNB_g[0][0]->lte_frame_parms);
 #endif
@@ -1715,6 +1723,7 @@ oai_shutdown (void) {
     free (otg_pdcp_buffer);
 
 #ifdef SMBV
+    // Rohde&Schwarz SMBV100A vector signal generator
     if (config_smbv) {
         smbv_send_config (smbv_fname,smbv_ip);
     }
