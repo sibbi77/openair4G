@@ -1757,7 +1757,7 @@ oai_shutdown (void) {
          #endif
          */
 
-        for (i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             free (s_re[i]);
             free (s_im[i]);
             free (r_re[i]);
