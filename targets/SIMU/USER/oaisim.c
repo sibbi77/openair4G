@@ -1722,12 +1722,12 @@ void
 oai_shutdown (void) {
     static int done = 0;
     int i;
-    char interfaceName[8];
 
     if (done)
         return;
 
     free (otg_pdcp_buffer);
+    otg_pdcp_buffer = 0;
 
 #ifdef SMBV
     // Rohde&Schwarz SMBV100A vector signal generator
@@ -1775,6 +1775,10 @@ oai_shutdown (void) {
         free (s_im);
         free (r_re);
         free (r_im);
+        s_re = 0;
+        s_im = 0;
+        r_re = 0;
+        r_im = 0;
 
         lte_sync_time_free ();
     }
@@ -1783,9 +1787,11 @@ oai_shutdown (void) {
     if (oai_emulation.info.ocm_enabled == 1) {
         for (eNB_inst = 0; eNB_inst < NUMBER_OF_eNB_MAX; eNB_inst++) {
             free (enb_data[eNB_inst]);
+            enb_data[eNB_inst] = 0;
         }
         for (UE_inst = 0; UE_inst < NUMBER_OF_UE_MAX; UE_inst++) {
             free (ue_data[UE_inst]);
+            ue_data[UE_inst] = 0;
         }
     } //End of PHY abstraction changes
 
@@ -1800,8 +1806,10 @@ oai_shutdown (void) {
                     omv_end (pfd[1], omv_data);
 #endif
     if ((oai_emulation.info.ocm_enabled == 1) && (ethernet_flag == 0)
-                    && (ShaF != NULL))
+                    && (ShaF != NULL)) {
         destroyMat (ShaF, map1, map2);
+        ShaF = 0;
+    }
 
     if ((oai_emulation.info.opt_enabled == 1))
         terminate_opt ();
@@ -1811,14 +1819,16 @@ oai_shutdown (void) {
 
     for (i = 0; i < NUMBER_OF_eNB_MAX + NUMBER_OF_UE_MAX; i++)
         if (oai_emulation.info.oai_ifup[i] == 1) {
-            sprintf (interfaceName, "oai%d", i);
+            char interfaceName[8];
+            snprintf (interfaceName, sizeof(interfaceName), "oai%d", i);
             bringInterfaceUp (interfaceName, 0);
         }
 
     log_thread_finalize ();
     logClean ();
     vcd_signal_dumper_close ();
-    done = 1;
+
+    done = 1; // prevent next invokation of this function
 
     LOG_N(EMU,
           ">>>>>>>>>>>>>>>>>>>>>>>>>>> OAIEMU shutdown <<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
