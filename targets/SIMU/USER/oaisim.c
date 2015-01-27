@@ -88,13 +88,12 @@ char smbv_ip[16];
 #include "cor_SF_sim.h"
 #include "UTIL/OMG/omg_constants.h"
 #include "UTIL/FIFO/pad_list.h"
+#include "enb_app.h"
 
-//#ifdef PROC
 #include "../PROC/interface.h"
 #include "../PROC/channel_sim_proc.h"
 #include "../PROC/Tsync.h"
 #include "../PROC/Process.h"
-//#endif
 
 #include "UTIL/LOG/vcd_signal_dumper.h"
 #include "UTIL/OTG/otg_kpi.h"
@@ -104,10 +103,6 @@ char smbv_ip[16];
 # include "intertask_interface.h"
 # include "create_tasks.h"
 #endif
-
-#define RF                    1
-#define MCS_COUNT             24 /*added for PHY abstraction */
-#define N_TRIALS              1
 
 /*
  DCI0_5MHz_TDD0_t          UL_alloc_pdu;
@@ -245,7 +240,7 @@ help (void) {
 pthread_t log_thread;
 
 void
-log_thread_init () {
+log_thread_init (void) {
     //create log_list
     //log_list_init(&log_list);
 #ifndef LOG_NO_THREAD
@@ -268,7 +263,7 @@ log_thread_init () {
 
 //Call it after the last LOG call
 int
-log_thread_finalize () {
+log_thread_finalize (void) {
     int err = 0;
 
 #ifndef LOG_NO_THREAD
@@ -409,7 +404,6 @@ l2l1_task_state_t l2l1_state = L2L1_WAITTING;
 void *
 l2l1_task (void *args_p) {
 
-    clock_t t;
     int CC_id;
 
     // Framing variables
