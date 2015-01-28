@@ -51,6 +51,7 @@
 #include "MBSFN-SubframeConfigList.h"
 #include "UTIL/LOG/vcd_signal_dumper.h"
 //#define DEBUG_PHY
+#include "assertions.h"
 
 #ifdef EXMIMO
 extern openair0_rf_map rf_map[MAX_NUM_CCs];
@@ -60,6 +61,7 @@ extern uint16_t prach_root_sequence_map0_3[838];
 extern uint16_t prach_root_sequence_map4[138];
 uint8_t dmrs1_tab[8] = {0,2,3,4,6,8,9,10};
 
+// FIXME not used anywhere
 void phy_config_mib(LTE_DL_FRAME_PARMS *lte_frame_parms,
 		    uint8_t N_RB_DL,
 		    uint8_t Nid_cell,
@@ -869,22 +871,23 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
 		    int nb_connected_eNB,
 		    uint8_t abstraction_flag) {
 
-  LTE_DL_FRAME_PARMS *frame_parms     = &phy_vars_ue->lte_frame_parms;
-  LTE_UE_COMMON *ue_common_vars       = &phy_vars_ue->lte_ue_common_vars;
-  LTE_UE_PDSCH **ue_pdsch_vars        = phy_vars_ue->lte_ue_pdsch_vars;
-  LTE_UE_PDSCH_FLP **ue_pdsch_vars_flp= phy_vars_ue->lte_ue_pdsch_vars_flp;
-  LTE_UE_PDSCH **ue_pdsch_vars_SI     = phy_vars_ue->lte_ue_pdsch_vars_SI;
-  LTE_UE_PDSCH **ue_pdsch_vars_ra     = phy_vars_ue->lte_ue_pdsch_vars_ra;
-  LTE_UE_PDSCH **ue_pdsch_vars_mch    = phy_vars_ue->lte_ue_pdsch_vars_MCH;
-  LTE_UE_PBCH **ue_pbch_vars          = phy_vars_ue->lte_ue_pbch_vars;
-  LTE_UE_PDCCH **ue_pdcch_vars        = phy_vars_ue->lte_ue_pdcch_vars;
-  LTE_UE_PRACH **ue_prach_vars        = phy_vars_ue->lte_ue_prach_vars;
+  // create shortcuts
+  LTE_DL_FRAME_PARMS* const frame_parms     = &phy_vars_ue->lte_frame_parms;
+  LTE_UE_COMMON* const ue_common_vars       = &phy_vars_ue->lte_ue_common_vars;
+  LTE_UE_PDSCH** const ue_pdsch_vars        = phy_vars_ue->lte_ue_pdsch_vars;
+  LTE_UE_PDSCH_FLP** const ue_pdsch_vars_flp= phy_vars_ue->lte_ue_pdsch_vars_flp;
+  LTE_UE_PDSCH** const ue_pdsch_vars_SI     = phy_vars_ue->lte_ue_pdsch_vars_SI;
+  LTE_UE_PDSCH** const ue_pdsch_vars_ra     = phy_vars_ue->lte_ue_pdsch_vars_ra;
+  LTE_UE_PDSCH** const ue_pdsch_vars_mch    = phy_vars_ue->lte_ue_pdsch_vars_MCH;
+  LTE_UE_PBCH** const ue_pbch_vars          = phy_vars_ue->lte_ue_pbch_vars;
+  LTE_UE_PDCCH** const ue_pdcch_vars        = phy_vars_ue->lte_ue_pdcch_vars;
+  LTE_UE_PRACH** const ue_prach_vars        = phy_vars_ue->lte_ue_prach_vars;
 
   int i,j,k;
   unsigned char eNB_id;
 
-  msg("Initializing UE vars (abstraction %d) for eNB TXant %d, UE RXant %d\n",abstraction_flag,frame_parms->nb_antennas_tx,frame_parms->nb_antennas_rx);
-  LOG_D(PHY,"[MSC_NEW][FRAME 00000][PHY_UE][MOD %02d][]\n", phy_vars_ue->Mod_id+NB_eNB_INST);
+  msg("Initializing UE vars (abstraction %"PRIu8") for eNB TXant %"PRIu8", UE RXant %"PRIu8"\n",abstraction_flag,frame_parms->nb_antennas_tx,frame_parms->nb_antennas_rx);
+  LOG_D(PHY,"[MSC_NEW][FRAME 00000][PHY_UE][MOD %02hhu][]\n", phy_vars_ue->Mod_id+NB_eNB_INST);
   for (i=0;i<4;i++) {
     phy_vars_ue->rx_gain_max[i] = 135;
     phy_vars_ue->rx_gain_med[i] = 128;
@@ -892,6 +895,7 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
   }
   phy_vars_ue->n_connected_eNB = nb_connected_eNB;
 
+  AssertFatal( phy_vars_ue->n_connected_eNB <= NUMBER_OF_CONNECTED_eNB_MAX, "phy_vars_ue->n_connected_eNB is too large" );
   for(eNB_id = 0; eNB_id < phy_vars_ue->n_connected_eNB; eNB_id++){
     phy_vars_ue->total_TBS[eNB_id] = 0;
     phy_vars_ue->total_TBS_last[eNB_id] = 0;
@@ -902,11 +906,11 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
 
   if (abstraction_flag == 0) {
 
-    ue_common_vars->txdata = (int **)malloc16(frame_parms->nb_antennas_tx*sizeof(int*));
+    ue_common_vars->txdata = (int32_t**)malloc16(frame_parms->nb_antennas_tx*sizeof(int32_t*));
     for (i=0; i<frame_parms->nb_antennas_tx; i++) {
 #ifdef USER_MODE
-      ue_common_vars->txdata[i] = (int *)malloc16(FRAME_LENGTH_COMPLEX_SAMPLES*sizeof(int));
-      bzero(ue_common_vars->txdata[i],FRAME_LENGTH_COMPLEX_SAMPLES*sizeof(int));
+      ue_common_vars->txdata[i] = (int32_t*)malloc16(FRAME_LENGTH_COMPLEX_SAMPLES*sizeof(int32_t));
+      bzero(ue_common_vars->txdata[i],FRAME_LENGTH_COMPLEX_SAMPLES*sizeof(int32_t));
 #else //USER_MODE
       ue_common_vars->txdata[i] = TX_DMA_BUFFER[0][i];
 #endif //USER_MODE
@@ -924,7 +928,7 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
     }
     
     // RX buffers
-    ue_common_vars->rxdata = (int **)malloc16(frame_parms->nb_antennas_rx*sizeof(int*));
+    ue_common_vars->rxdata = (int32_t**)malloc16(frame_parms->nb_antennas_rx*sizeof(int32_t*));
     if (ue_common_vars->rxdata) {
 #ifdef DEBUG_PHY
       msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdata allocated at %p\n", ue_common_vars->rxdata);
@@ -937,9 +941,9 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
     
     for (i=0; i<frame_parms->nb_antennas_rx; i++) {
 #ifndef USER_MODE
-      ue_common_vars->rxdata[i] = (int*) RX_DMA_BUFFER[0][i];
+      ue_common_vars->rxdata[i] = (int32_t*) RX_DMA_BUFFER[0][i];
 #else //USER_MODE
-      ue_common_vars->rxdata[i] = (int*) malloc16((FRAME_LENGTH_COMPLEX_SAMPLES+2048)*sizeof(int));
+      ue_common_vars->rxdata[i] = (int32_t*) malloc16((FRAME_LENGTH_COMPLEX_SAMPLES+2048)*sizeof(int32_t));
 #endif //USER_MODE
       if (ue_common_vars->rxdata[i]) {
 #ifdef DEBUG_PHY
@@ -952,7 +956,7 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
       }
     }
     
-    ue_common_vars->rxdataF = (int **)malloc16(frame_parms->nb_antennas_rx*sizeof(int*));
+    ue_common_vars->rxdataF = (int32_t**)malloc16(frame_parms->nb_antennas_rx*sizeof(int32_t*));
     if (ue_common_vars->rxdataF) {
 #ifdef DEBUG_PHY
       msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF allocated at %p\n", ue_common_vars->rxdataF);
@@ -965,7 +969,7 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
     
     for (i=0; i<frame_parms->nb_antennas_rx; i++) {
       //RK 2 times because of output format of FFT!  We should get rid of this
-      ue_common_vars->rxdataF[i] = (int *)malloc16(2*sizeof(int)*(frame_parms->ofdm_symbol_size*14));
+      ue_common_vars->rxdataF[i] = (int32_t*)malloc16(2*sizeof(int32_t)*(frame_parms->ofdm_symbol_size*14));
       if (ue_common_vars->rxdataF[i]) {
 #ifdef DEBUG_PHY
 	msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF[%d] allocated at %p\n",i,ue_common_vars->rxdataF[i]);
@@ -977,7 +981,7 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
       }
     }
 
-    ue_common_vars->rxdataF2 = (int **)malloc16(frame_parms->nb_antennas_rx*sizeof(int*));
+    ue_common_vars->rxdataF2 = (int32_t**)malloc16(frame_parms->nb_antennas_rx*sizeof(int32_t*));
     if (ue_common_vars->rxdataF2) {
 #ifdef DEBUG_PHY
       msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF2 allocated at %p\n", ue_common_vars->rxdataF2);
@@ -991,7 +995,7 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
     
     for (i=0; i<frame_parms->nb_antennas_rx; i++) {
       //RK 2 times because of output format of FFT!  We should get rid of this
-      ue_common_vars->rxdataF2[i] = (int *)malloc16(2*sizeof(int)*(frame_parms->ofdm_symbol_size*frame_parms->symbols_per_tti*10));
+      ue_common_vars->rxdataF2[i] = (int32_t*)malloc16(2*sizeof(int32_t)*(frame_parms->ofdm_symbol_size*frame_parms->symbols_per_tti*10));
       if (ue_common_vars->rxdataF2[i]) {
 #ifdef DEBUG_PHY
 	msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF2[%d] allocated at %p\n",i,ue_common_vars->rxdataF2[i]);
@@ -1007,10 +1011,10 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
     
   // Channel estimates  
   for (eNB_id=0;eNB_id<7;eNB_id++) {
-    ue_common_vars->dl_ch_estimates[eNB_id] = (int **)malloc16(8*sizeof(int*));
+    ue_common_vars->dl_ch_estimates[eNB_id] = (int32_t**)malloc16(8*sizeof(int32_t*));
     if (ue_common_vars->dl_ch_estimates[eNB_id]) {
 #ifdef DEBUG_PHY
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates (eNB %d) allocated at %p\n",
+      msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates (eNB %hhu) allocated at %p\n",
 	  eNB_id,ue_common_vars->dl_ch_estimates[eNB_id]);
 #endif
     }
@@ -1019,17 +1023,18 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
       return(-1);
     }
     
-    
+    AssertFatal( frame_parms->nb_antennas_rx <= 2, "hard coded allocation for ue_common_vars->dl_ch_estimates[eNB_id]" );
     for (i=0; i<frame_parms->nb_antennas_rx; i++)
       for (j=0; j<4; j++) {
-	ue_common_vars->dl_ch_estimates[eNB_id][(j<<1) + i] = (int *)malloc16(frame_parms->symbols_per_tti*sizeof(int)*(frame_parms->ofdm_symbol_size)+LTE_CE_FILTER_LENGTH);
-	if (ue_common_vars->dl_ch_estimates[eNB_id][(j<<1)+i]) {
+        int idx = (j<<1) + i;
+        ue_common_vars->dl_ch_estimates[eNB_id][idx] = (int32_t*)malloc16(frame_parms->symbols_per_tti*sizeof(int32_t)*(frame_parms->ofdm_symbol_size)+LTE_CE_FILTER_LENGTH);
+        if (ue_common_vars->dl_ch_estimates[eNB_id][idx]) {
 #ifdef DEBUG_PHY
-	  msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates[%d][%d] allocated at %p\n",eNB_id,(j<<1)+i,
-	      ue_common_vars->dl_ch_estimates[eNB_id][(j<<1)+i]);
+          msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates[%d][%d] allocated at %p\n",eNB_id,idx,
+              ue_common_vars->dl_ch_estimates[eNB_id][idx);
 #endif
 	  
-	  memset(ue_common_vars->dl_ch_estimates[eNB_id][(j<<1)+i],0,frame_parms->symbols_per_tti*sizeof(int)*(frame_parms->ofdm_symbol_size)+LTE_CE_FILTER_LENGTH);
+          memset(ue_common_vars->dl_ch_estimates[eNB_id][idx],0,frame_parms->symbols_per_tti*sizeof(int32_t)*(frame_parms->ofdm_symbol_size)+LTE_CE_FILTER_LENGTH);
 	}
 	else {
 	  msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates[%d] not allocated\n",i);
@@ -1039,10 +1044,10 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
   }
     
   for (eNB_id=0;eNB_id<7;eNB_id++) {
-    ue_common_vars->dl_ch_estimates_time[eNB_id] = (int **)malloc16(8*sizeof(int*));
+    ue_common_vars->dl_ch_estimates_time[eNB_id] = (int32_t**)malloc16(8*sizeof(int32_t*));
     if (ue_common_vars->dl_ch_estimates_time[eNB_id]) {
 #ifdef DEBUG_PHY
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%d] allocated at %p\n",eNB_id,
+      msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%hhu] allocated at %p\n",eNB_id,
 	  ue_common_vars->dl_ch_estimates_time[eNB_id]);
 #endif
     }
@@ -1051,20 +1056,21 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
       return(-1);
     }
   
-  
+    AssertFatal( frame_parms->nb_antennas_rx <= 2, "hard coded allocation for ue_common_vars->dl_ch_estimates_time[eNB_id]" );
     for (i=0; i<frame_parms->nb_antennas_rx; i++)
       for (j=0; j<4; j++) {
-	ue_common_vars->dl_ch_estimates_time[eNB_id][(j<<1)+i] = (int *)malloc16(sizeof(int)*(frame_parms->ofdm_symbol_size)*2);
-	if (ue_common_vars->dl_ch_estimates_time[eNB_id][(j<<1)+i]) {
+        int idx = (j<<1) + i;
+        ue_common_vars->dl_ch_estimates_time[eNB_id][idx] = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->ofdm_symbol_size)*2);
+        if (ue_common_vars->dl_ch_estimates_time[eNB_id][idx]) {
 #ifdef DEBUG_PHY
-	  msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%d] allocated at %p\n",i,
-	      ue_common_vars->dl_ch_estimates_time[eNB_id][(j<<1)+i]);
+          msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%hhu][%d] allocated at %p\n",eNB_id,idx,
+              ue_common_vars->dl_ch_estimates_time[eNB_id][idx]);
 #endif
 	  
-	  memset(ue_common_vars->dl_ch_estimates_time[eNB_id][(j<<1)+i],0,sizeof(int)*(frame_parms->ofdm_symbol_size)*2);
+          memset(ue_common_vars->dl_ch_estimates_time[eNB_id][idx],0,sizeof(int32_t)*(frame_parms->ofdm_symbol_size)*2);
 	}
 	else {
-	  msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%d] not allocated\n",i);
+          msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%d][%d] not allocated\n",eNB_id,idx);
 	  return(-1);
 	}
       }    
@@ -1078,6 +1084,8 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
     ue_pdsch_vars[eNB_id]    = (LTE_UE_PDSCH *)malloc16(sizeof(LTE_UE_PDSCH));
 #ifdef ENABLE_FULL_FLP
     ue_pdsch_vars_flp[eNB_id]= (LTE_UE_PDSCH_FLP *)malloc16(sizeof(LTE_UE_PDSCH_FLP));
+#else
+    ue_pdsch_vars_flp[eNB_id]= 0;
 #endif
     ue_pdsch_vars_SI[eNB_id] = (LTE_UE_PDSCH *)malloc16(sizeof(LTE_UE_PDSCH));
     ue_pdsch_vars_ra[eNB_id] = (LTE_UE_PDSCH *)malloc16(sizeof(LTE_UE_PDSCH));
@@ -1086,92 +1094,92 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
     ue_prach_vars[eNB_id]    = (LTE_UE_PRACH *)malloc16(sizeof(LTE_UE_PRACH));
 
 #ifdef DEBUG_PHY
-    msg("[OPENAIR][LTE PHY][INIT] ue_pdsch_vars[%d] = %p\n",eNB_id,ue_pdsch_vars[eNB_id]);
-    msg("[OPENAIR][LTE PHY][INIT] ue_pdsch_vars_SI[%d] = %p\n",eNB_id,ue_pdsch_vars_SI[eNB_id]);
-    msg("[OPENAIR][LTE PHY][INIT] ue_pdsch_vars_ra[%d] = %p\n",eNB_id,ue_pdsch_vars_ra[eNB_id]);
-    msg("[OPENAIR][LTE PHY][INIT] ue_pdsch_vars_mch[%d] = %p\n",eNB_id,ue_pdsch_vars_mch[eNB_id]);
-    msg("[OPENAIR][LTE PHY][INIT] ue_pdcch_vars[%d] = %p\n",eNB_id,ue_pdcch_vars[eNB_id]);
-    msg("[OPENAIR][LTE PHY][INIT] ue_prach_vars[%d] = %p\n",eNB_id,ue_prach_vars[eNB_id]);
-    //msg("[OPENAIR][LTE PHY][INIT] prach_resources[%d] = %p\n",eNB_id,prach_resources[eNB_id]);
+    msg("[OPENAIR][LTE PHY][INIT] ue_pdsch_vars[%hhu] = %p\n",eNB_id,ue_pdsch_vars[eNB_id]);
+    msg("[OPENAIR][LTE PHY][INIT] ue_pdsch_vars_SI[%hhu] = %p\n",eNB_id,ue_pdsch_vars_SI[eNB_id]);
+    msg("[OPENAIR][LTE PHY][INIT] ue_pdsch_vars_ra[%hhu] = %p\n",eNB_id,ue_pdsch_vars_ra[eNB_id]);
+    msg("[OPENAIR][LTE PHY][INIT] ue_pdsch_vars_mch[%hhu] = %p\n",eNB_id,ue_pdsch_vars_mch[eNB_id]);
+    msg("[OPENAIR][LTE PHY][INIT] ue_pdcch_vars[%hhu] = %p\n",eNB_id,ue_pdcch_vars[eNB_id]);
+    msg("[OPENAIR][LTE PHY][INIT] ue_prach_vars[%hhu] = %p\n",eNB_id,ue_prach_vars[eNB_id]);
+    //msg("[OPENAIR][LTE PHY][INIT] prach_resources[%hhu] = %p\n",eNB_id,prach_resources[eNB_id]);
 #endif
 
     if (abstraction_flag == 0) {
-      ue_pdsch_vars[eNB_id]->rxdataF_ext     = (int **)malloc16(8*sizeof(int*));
-      ue_pdsch_vars[eNB_id]->llr_shifts = (unsigned char *)malloc16(sizeof(unsigned char)*7*2*frame_parms->N_RB_DL*12);
+      ue_pdsch_vars[eNB_id]->rxdataF_ext     = (int32_t**)malloc16(8*sizeof(int32_t*));
+      ue_pdsch_vars[eNB_id]->llr_shifts = (uint8_t*)malloc16(7*2*frame_parms->N_RB_DL*12);
       ue_pdsch_vars[eNB_id]->llr_shifts_p = ue_pdsch_vars[eNB_id]->llr_shifts;
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4; j++) //frame_parms->nb_antennas_tx; j++)
-	  ue_pdsch_vars[eNB_id]->rxdataF_ext[(j<<1)+i]     = (int *)malloc16(sizeof(int)*(frame_parms->N_RB_DL*12*14));
+          ue_pdsch_vars[eNB_id]->rxdataF_ext[(j<<1)+i]     = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->N_RB_DL*12*14));
       
-      ue_pdsch_vars[eNB_id]->rxdataF_comp0     = (int **)malloc16(8*sizeof(int*));
+      ue_pdsch_vars[eNB_id]->rxdataF_comp0     = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (k=0;k<8;k++)
-	ue_pdsch_vars[eNB_id]->rxdataF_comp1[k]     = (int **)malloc16(8*sizeof(int*));
+        ue_pdsch_vars[eNB_id]->rxdataF_comp1[k]     = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++){
-	  ue_pdsch_vars[eNB_id]->rxdataF_comp0[(j<<1)+i]     = (int *)malloc16(sizeof(int)*(frame_parms->N_RB_DL*12*14));
-	  for (k=0;k<8;k++) 
-	    ue_pdsch_vars[eNB_id]->rxdataF_comp1[(j<<1)+i][k]     = (int *)malloc16(sizeof(int)*(frame_parms->N_RB_DL*12*14));
+          ue_pdsch_vars[eNB_id]->rxdataF_comp0[(j<<1)+i]     = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->N_RB_DL*12*14));
+          for (k=0;k<8;k++)
+            ue_pdsch_vars[eNB_id]->rxdataF_comp1[(j<<1)+i][k]     = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->N_RB_DL*12*14));
 	}
       // printf("rxdataF_comp[0] %p\n",ue_pdsch_vars[eNB_id]->rxdataF_comp[0]);
       
-      ue_pdcch_vars[eNB_id]->rxdataF_comp    = (int **)malloc16(8*sizeof(int*));
+      ue_pdcch_vars[eNB_id]->rxdataF_comp    = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++)//frame_parms->nb_antennas_tx; j++)
-	  ue_pdcch_vars[eNB_id]->rxdataF_comp[(j<<1)+i] = (int *)malloc16(sizeof(int)*(frame_parms->N_RB_DL*12*4));
+          ue_pdcch_vars[eNB_id]->rxdataF_comp[(j<<1)+i] = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->N_RB_DL*12*4));
       
-      ue_pdcch_vars[eNB_id]->dl_ch_rho_ext = (int **)malloc16(8*sizeof(short*));
+      ue_pdcch_vars[eNB_id]->dl_ch_rho_ext = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++)//frame_parms->nb_antennas_tx; j++)
-	  ue_pdcch_vars[eNB_id]->dl_ch_rho_ext[(j<<1)+i] = (int *)malloc16(7*2*sizeof(int)*(frame_parms->N_RB_DL*12));
+          ue_pdcch_vars[eNB_id]->dl_ch_rho_ext[(j<<1)+i] = (int32_t*)malloc16(7*2*sizeof(int32_t)*(frame_parms->N_RB_DL*12));
       
-      ue_pdcch_vars[eNB_id]->rho = (int **)malloc16(frame_parms->nb_antennas_rx*sizeof(int*));
+      ue_pdcch_vars[eNB_id]->rho = (int32_t**)malloc16(frame_parms->nb_antennas_rx*sizeof(int32_t*));
       for (i=0;i<frame_parms->nb_antennas_rx;i++)
-	ue_pdcch_vars[eNB_id]->rho[i] = (int *)malloc16(sizeof(int)*(frame_parms->N_RB_DL*12*7*2));
+        ue_pdcch_vars[eNB_id]->rho[i] = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->N_RB_DL*12*7*2));
 
-      ue_pdsch_vars[eNB_id]->dl_ch_estimates_ext = (int **)malloc16(8*sizeof(int*));
+      ue_pdsch_vars[eNB_id]->dl_ch_estimates_ext = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++) {//frame_parms->nb_antennas_tx; j++)
-	  ue_pdsch_vars[eNB_id]->dl_ch_estimates_ext[(j<<1)+i] = (int *)malloc16(7*2*sizeof(int)*(frame_parms->N_RB_DL*12));
+          ue_pdsch_vars[eNB_id]->dl_ch_estimates_ext[(j<<1)+i] = (int32_t*)malloc16(7*2*sizeof(int32_t)*(frame_parms->N_RB_DL*12));
 	}      
-      ue_pdsch_vars[eNB_id]->dl_ch_rho_ext     = (int **)malloc16(8*sizeof(short*));
+      ue_pdsch_vars[eNB_id]->dl_ch_rho_ext     = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++)//frame_parms->nb_antennas_tx; j++)
-	  ue_pdsch_vars[eNB_id]->dl_ch_rho_ext[(j<<1)+i]     = (int *)malloc16(7*2*sizeof(int)*(frame_parms->N_RB_DL*12));
+          ue_pdsch_vars[eNB_id]->dl_ch_rho_ext[(j<<1)+i]     = (int32_t*)malloc16(7*2*sizeof(int32_t)*(frame_parms->N_RB_DL*12));
       
-      ue_pdsch_vars[eNB_id]->pmi_ext = (unsigned char *)malloc16(frame_parms->N_RB_DL);
+      ue_pdsch_vars[eNB_id]->pmi_ext = (uint8_t*)malloc16(frame_parms->N_RB_DL);
             
-      ue_pdsch_vars[eNB_id]->dl_ch_mag0     = (int **)malloc16(8*sizeof(short*));
-      ue_pdsch_vars[eNB_id]->dl_ch_mag1     = (int **)malloc16(8*sizeof(short*));
+      ue_pdsch_vars[eNB_id]->dl_ch_mag0     = (int32_t**)malloc16(8*sizeof(int32_t*));
+      ue_pdsch_vars[eNB_id]->dl_ch_mag1     = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++) {
-	  ue_pdsch_vars[eNB_id]->dl_ch_mag0[(j<<1)+i]     = (int *)malloc16(7*2*sizeof(int)*(frame_parms->N_RB_DL*12));
-	  ue_pdsch_vars[eNB_id]->dl_ch_mag1[(j<<1)+i]     = (int *)malloc16(7*2*sizeof(int)*(frame_parms->N_RB_DL*12));
+          ue_pdsch_vars[eNB_id]->dl_ch_mag0[(j<<1)+i]     = (int32_t*)malloc16(7*2*sizeof(int32_t)*(frame_parms->N_RB_DL*12));
+          ue_pdsch_vars[eNB_id]->dl_ch_mag1[(j<<1)+i]     = (int32_t*)malloc16(7*2*sizeof(int32_t)*(frame_parms->N_RB_DL*12));
 	}
 
-      ue_pdsch_vars[eNB_id]->dl_ch_magb0     = (int **)malloc16(8*sizeof(short*));
-      ue_pdsch_vars[eNB_id]->dl_ch_magb1     = (int **)malloc16(8*sizeof(short*));
+      ue_pdsch_vars[eNB_id]->dl_ch_magb0     = (int32_t**)malloc16(8*sizeof(int32_t*));
+      ue_pdsch_vars[eNB_id]->dl_ch_magb1     = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++) {
-	  ue_pdsch_vars[eNB_id]->dl_ch_magb0[(j<<1)+i] = (int *)malloc16(7*2*sizeof(int)*(frame_parms->N_RB_DL*12));
-	  ue_pdsch_vars[eNB_id]->dl_ch_magb1[(j<<1)+i] = (int *)malloc16(7*2*sizeof(int)*(frame_parms->N_RB_DL*12));
+          ue_pdsch_vars[eNB_id]->dl_ch_magb0[(j<<1)+i] = (int32_t*)malloc16(7*2*sizeof(int32_t)*(frame_parms->N_RB_DL*12));
+          ue_pdsch_vars[eNB_id]->dl_ch_magb1[(j<<1)+i] = (int32_t*)malloc16(7*2*sizeof(int32_t)*(frame_parms->N_RB_DL*12));
 	}
       
-      ue_pdsch_vars[eNB_id]->rho     = (int **)malloc16(frame_parms->nb_antennas_rx*sizeof(int*));
+      ue_pdsch_vars[eNB_id]->rho     = (int32_t**)malloc16(frame_parms->nb_antennas_rx*sizeof(int32_t*));
       for (i=0;i<frame_parms->nb_antennas_rx;i++)
-	ue_pdsch_vars[eNB_id]->rho[i]     = (int *)malloc16(sizeof(int)*(frame_parms->N_RB_DL*12*7*2));
+        ue_pdsch_vars[eNB_id]->rho[i]     = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->N_RB_DL*12*7*2));
       
-      ue_pdsch_vars[eNB_id]->llr[0] = (short *)malloc16((8*((3*8*6144)+12))*sizeof(short));
-      ue_pdsch_vars[eNB_id]->llr[1] = (short *)malloc16((8*((3*8*6144)+12))*sizeof(short));
+      ue_pdsch_vars[eNB_id]->llr[0] = (int16_t*)malloc16((8*((3*8*6144)+12))*sizeof(int16_t));
+      ue_pdsch_vars[eNB_id]->llr[1] = (int16_t*)malloc16((8*((3*8*6144)+12))*sizeof(int16_t));
       
-      ue_pdsch_vars[eNB_id]->llr128 = (short **)malloc16(sizeof(short **));
+      ue_pdsch_vars[eNB_id]->llr128 = (int16_t **)malloc16(sizeof(int16_t*));
  
 
 
 #ifdef ENABLE_FULL_FLP
-      ue_pdsch_vars_flp[eNB_id]->rxdataF_ext = (int **)malloc16(8*sizeof(int*));
+      ue_pdsch_vars_flp[eNB_id]->rxdataF_ext = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4; j++) //frame_parms->nb_antennas_tx; j++)
-	  ue_pdsch_vars_flp[eNB_id]->rxdataF_ext[(j<<1)+i] = (int *)malloc16(sizeof(int)*(frame_parms->N_RB_DL*12*14));
+          ue_pdsch_vars_flp[eNB_id]->rxdataF_ext[(j<<1)+i] = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->N_RB_DL*12*14));
       
       ue_pdsch_vars_flp[eNB_id]->rxdataF_comp = (double **)malloc16(8*sizeof(double*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
@@ -1179,17 +1187,17 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
 	  ue_pdsch_vars_flp[eNB_id]->rxdataF_comp[(j<<1)+i] = (double *)malloc16(sizeof(double)*(frame_parms->N_RB_DL*12*14));
       // printf("rxdataF_comp[0] %p\n",ue_pdsch_vars[eNB_id]->rxdataF_comp[0]);
       
-      ue_pdsch_vars_flp[eNB_id]->dl_ch_estimates_ext = (int **)malloc16(8*sizeof(int*));
+      ue_pdsch_vars_flp[eNB_id]->dl_ch_estimates_ext = (int32_t**)malloc16(8*sizeof(int32_t*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++) {//frame_parms->nb_antennas_tx; j++)
-	  ue_pdsch_vars_flp[eNB_id]->dl_ch_estimates_ext[(j<<1)+i] = (int *)malloc16(7*2*sizeof(int)*(frame_parms->N_RB_DL*12));
+          ue_pdsch_vars_flp[eNB_id]->dl_ch_estimates_ext[(j<<1)+i] = (int32_t*)malloc16(7*2*sizeof(int32_t)*(frame_parms->N_RB_DL*12));
 	}      
       ue_pdsch_vars_flp[eNB_id]->dl_ch_rho_ext = (double **)malloc16(8*sizeof(double*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
 	for (j=0; j<4;j++)//frame_parms->nb_antennas_tx; j++)
 	  ue_pdsch_vars_flp[eNB_id]->dl_ch_rho_ext[(j<<1)+i] = (double *)malloc16(7*2*sizeof(double)*(frame_parms->N_RB_DL*12));
      
-      ue_pdsch_vars_flp[eNB_id]->pmi_ext = (unsigned char *)malloc16(frame_parms->N_RB_DL);
+      ue_pdsch_vars_flp[eNB_id]->pmi_ext = (uint8_t*)malloc16(frame_parms->N_RB_DL);
       
       ue_pdsch_vars_flp[eNB_id]->dl_ch_mag = (double **)malloc16(8*sizeof(double*));
       for (i=0; i<frame_parms->nb_antennas_rx; i++)
@@ -1205,10 +1213,10 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
       for (i=0;i<frame_parms->nb_antennas_rx;i++)
 	ue_pdsch_vars_flp[eNB_id]->rho[i] = (double *)malloc16(sizeof(double)*(frame_parms->N_RB_DL*12*7*2));
       
-      ue_pdsch_vars_flp[eNB_id]->llr[0] = (short *)malloc16((8*((3*8*6144)+12))*sizeof(short));
-      ue_pdsch_vars_flp[eNB_id]->llr[1] = (short *)malloc16((8*((3*8*6144)+12))*sizeof(short));
+      ue_pdsch_vars_flp[eNB_id]->llr[0] = (int16_t*)malloc16((8*((3*8*6144)+12))*sizeof(int16_t));
+      ue_pdsch_vars_flp[eNB_id]->llr[1] = (int16_t*)malloc16((8*((3*8*6144)+12))*sizeof(int16_t));
       
-      ue_pdsch_vars_flp[eNB_id]->llr128 = (short **)malloc16(sizeof(short **));
+      ue_pdsch_vars_flp[eNB_id]->llr128 = (int16_t**)malloc16(sizeof(int16_t*));
 #endif
 
 
