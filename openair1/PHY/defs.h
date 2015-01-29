@@ -212,6 +212,9 @@ typedef struct PHY_VARS_eNB_s{
   LTE_eNB_COMMON       lte_eNB_common_vars;
   LTE_eNB_SRS          lte_eNB_srs_vars[NUMBER_OF_UE_MAX];
   LTE_eNB_PBCH         lte_eNB_pbch;
+  /// \brief ?.
+  /// - first index: UE [0..NUMBER_OF_UE_MAX[ (hard coded)
+  /// - second index: UE [0..NUMBER_OF_UE_MAX[
   LTE_eNB_PUSCH       *lte_eNB_pusch_vars[NUMBER_OF_UE_MAX];
   LTE_eNB_PRACH        lte_eNB_prach_vars;
   LTE_eNB_DLSCH_t     *dlsch_eNB[NUMBER_OF_UE_MAX][2];   // Nusers times two spatial streams
@@ -244,7 +247,8 @@ typedef struct PHY_VARS_eNB_s{
 
   int              N_TA_offset; ///timing offset used in TDD
 
-  /// sinr for all subcarriers of the current link (used only for abstraction)
+  /// \brief sinr for all subcarriers of the current link (used only for abstraction).
+  /// first index: ? [0..N_RB_DL*12[
   double *sinr_dB;
 
  /// N0 (used for abstraction)
