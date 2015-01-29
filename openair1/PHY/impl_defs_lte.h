@@ -873,15 +873,23 @@ typedef struct {
 } LTE_eNB_PBCH;
 
 typedef struct {
-  /// Pointers to extracted PBCH symbols in frequency-domain
+  /// \brief Pointers to extracted PBCH symbols in frequency-domain.
+  /// - first index: rx antenna [0..nb_antennas_rx[
+  /// - second index: ? [0..287] (hard coded)
   int32_t **rxdataF_ext;
-  /// Pointers to extracted and compensated PBCH symbols in frequency-domain
+  /// \brief Pointers to extracted and compensated PBCH symbols in frequency-domain.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..287] (hard coded)
   int32_t **rxdataF_comp;
-  /// Pointers to downlink channel estimates in frequency-domain extracted in PRBS
+  /// \brief Pointers to downlink channel estimates in frequency-domain extracted in PRBS.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..287] (hard coded)
   int32_t **dl_ch_estimates_ext;
-  /// Pointer to PBCH llrs
+  /// \brief Pointer to PBCH llrs.
+  /// - first index: ? [0..1919] (hard coded)
   int8_t *llr;
-  /// Pointer to PBCH decoded output
+  /// \brief Pointer to PBCH decoded output.
+  /// - first index: ? [0..63] (hard coded)
   uint8_t *decoded_output;
   /// Total number of PDU errors
   uint32_t pdu_errors;
