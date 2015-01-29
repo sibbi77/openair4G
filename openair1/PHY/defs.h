@@ -424,7 +424,7 @@ typedef struct
   uint8_t ho_triggered;
   PHY_MEASUREMENTS PHY_measurements; ///< Measurement variables
   LTE_DL_FRAME_PARMS  lte_frame_parms;
-  LTE_DL_FRAME_PARMS  lte_frame_parms_before_ho; // frame parame before ho used to recover if ho fails
+  LTE_DL_FRAME_PARMS  lte_frame_parms_before_ho; ///< frame parame before ho used to recover if ho fails
   LTE_UE_COMMON    lte_ue_common_vars;
 
   LTE_UE_PDSCH     *lte_ue_pdsch_vars[NUMBER_OF_CONNECTED_eNB_MAX+1];

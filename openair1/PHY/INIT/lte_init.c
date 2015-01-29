@@ -946,6 +946,14 @@ void phy_init_lte_ue__PDSCH_FLP( LTE_UE_PDSCH_FLP* const pdsch_flp, const LTE_DL
   }
 }
 
+/*! \brief Initialize some arrays of structure PHY_VARS_UE.
+ * \param[out] phy_vars_ue Pointer to a PHY_VARS_UE structure, which is partly initialized.
+ * \param nb_connected_eNB Number of eNBs the UE is connected to.
+ * \param abstraction_flag Enable abstraction of the PHY.
+ * \returns 0 if all memory allocations succeeded
+ * \returns -1 if any memory allocation failed
+ * \note The current implementation will never return -1, but segfault.
+ */
 int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
 		    int nb_connected_eNB,
 		    uint8_t abstraction_flag) {
@@ -966,7 +974,11 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
   unsigned char eNB_id;
 
   msg("Initializing UE vars (abstraction %"PRIu8") for eNB TXant %"PRIu8", UE RXant %"PRIu8"\n",abstraction_flag,frame_parms->nb_antennas_tx,frame_parms->nb_antennas_rx);
-  LOG_D(PHY,"[MSC_NEW][FRAME 00000][PHY_UE][MOD %02hhu][]\n", phy_vars_ue->Mod_id+NB_eNB_INST);
+  LOG_D(PHY,"[MSC_NEW][FRAME 00000][PHY_UE][MOD %02u][]\n", phy_vars_ue->Mod_id+NB_eNB_INST);
+
+  // many memory allocation sizes are hard coded
+  AssertFatal( frame_parms->nb_antennas_rx <= 2, "hard coded allocation for ue_common_vars->dl_ch_estimates[eNB_id]" );
+  AssertFatal( phy_vars_ue->n_connected_eNB <= NUMBER_OF_CONNECTED_eNB_MAX, "phy_vars_ue->n_connected_eNB is too large" );
 
   // init phy_vars_ue
 
@@ -977,7 +989,6 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
   }
   phy_vars_ue->n_connected_eNB = nb_connected_eNB;
 
-  AssertFatal( phy_vars_ue->n_connected_eNB <= NUMBER_OF_CONNECTED_eNB_MAX, "phy_vars_ue->n_connected_eNB is too large" );
   for(eNB_id = 0; eNB_id < phy_vars_ue->n_connected_eNB; eNB_id++){
     phy_vars_ue->total_TBS[eNB_id] = 0;
     phy_vars_ue->total_TBS_last[eNB_id] = 0;
@@ -994,165 +1005,45 @@ int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
     ue_common_vars->txdataF = (mod_sym_t **)malloc16(frame_parms->nb_antennas_tx*sizeof(mod_sym_t*));
     for (i=0; i<frame_parms->nb_antennas_tx; i++) {
 #ifdef USER_MODE
-      ue_common_vars->txdata[i] = (int32_t*)malloc16(FRAME_LENGTH_COMPLEX_SAMPLES*sizeof(int32_t));
-      bzero(ue_common_vars->txdata[i],FRAME_LENGTH_COMPLEX_SAMPLES*sizeof(int32_t));
-      ue_common_vars->txdataF[i] = (mod_sym_t *)malloc16(FRAME_LENGTH_COMPLEX_SAMPLES_NO_PREFIX*sizeof(mod_sym_t));
-      bzero(ue_common_vars->txdataF[i],FRAME_LENGTH_COMPLEX_SAMPLES_NO_PREFIX*sizeof(mod_sym_t));
+      ue_common_vars->txdata[i] = (int32_t*)malloc16_clear(FRAME_LENGTH_COMPLEX_SAMPLES*sizeof(int32_t));
+      ue_common_vars->txdataF[i] = (mod_sym_t *)malloc16_clear(FRAME_LENGTH_COMPLEX_SAMPLES_NO_PREFIX*sizeof(mod_sym_t));
 #else //USER_MODE
       ue_common_vars->txdata[i] = TX_DMA_BUFFER[0][i];
-      ue_common_vars->txdataF[i] = (mod_sym_t *)malloc16(FRAME_LENGTH_COMPLEX_SAMPLES_NO_PREFIX*sizeof(mod_sym_t));
-      bzero(ue_common_vars->txdataF[i],FRAME_LENGTH_COMPLEX_SAMPLES_NO_PREFIX*sizeof(mod_sym_t));
+      ue_common_vars->txdataF[i] = (mod_sym_t *)malloc16_clear(FRAME_LENGTH_COMPLEX_SAMPLES_NO_PREFIX*sizeof(mod_sym_t));
 #endif //USER_MODE
     }
 
     // init RX buffers
 
-    ue_common_vars->rxdata = (int32_t**)malloc16(frame_parms->nb_antennas_rx*sizeof(int32_t*));
-    if (ue_common_vars->rxdata) {
-#ifdef DEBUG_PHY
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdata allocated at %p\n", ue_common_vars->rxdata);
-#endif
-    }
-    else {
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdata not allocated\n");
-      return(-1);
-    }
-    
+    ue_common_vars->rxdata   = (int32_t**)malloc16( frame_parms->nb_antennas_rx*sizeof(int32_t*) );
+    ue_common_vars->rxdataF  = (int32_t**)malloc16( frame_parms->nb_antennas_rx*sizeof(int32_t*) );
+    ue_common_vars->rxdataF2 = (int32_t**)malloc16( frame_parms->nb_antennas_rx*sizeof(int32_t*) );
     for (i=0; i<frame_parms->nb_antennas_rx; i++) {
 #ifndef USER_MODE
       ue_common_vars->rxdata[i] = (int32_t*) RX_DMA_BUFFER[0][i];
 #else //USER_MODE
-      ue_common_vars->rxdata[i] = (int32_t*) malloc16((FRAME_LENGTH_COMPLEX_SAMPLES+2048)*sizeof(int32_t));
+      ue_common_vars->rxdata[i] = (int32_t*) malloc16_clear( (FRAME_LENGTH_COMPLEX_SAMPLES+2048)*sizeof(int32_t) );
 #endif //USER_MODE
-      if (ue_common_vars->rxdata[i]) {
-#ifdef DEBUG_PHY
-	msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdata[%d] allocated at %p\n",i,ue_common_vars->rxdata[i]);
-#endif
-      }
-      else {
-	msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdata[%d] not allocated\n",i);
-	return(-1);
-      }
-    }
-    
-    ue_common_vars->rxdataF = (int32_t**)malloc16(frame_parms->nb_antennas_rx*sizeof(int32_t*));
-    if (ue_common_vars->rxdataF) {
-#ifdef DEBUG_PHY
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF allocated at %p\n", ue_common_vars->rxdataF);
-#endif
-    }
-    else {
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF not allocated\n");
-      return(-1);
-    }
-    
-    for (i=0; i<frame_parms->nb_antennas_rx; i++) {
-      //RK 2 times because of output format of FFT!  We should get rid of this
-      ue_common_vars->rxdataF[i] = (int32_t*)malloc16(2*sizeof(int32_t)*(frame_parms->ofdm_symbol_size*14));
-      if (ue_common_vars->rxdataF[i]) {
-#ifdef DEBUG_PHY
-	msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF[%d] allocated at %p\n",i,ue_common_vars->rxdataF[i]);
-#endif
-      }
-      else {
-	msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF[%d] not allocated\n",i);
-	return(-1);
-      }
-    }
-
-    ue_common_vars->rxdataF2 = (int32_t**)malloc16(frame_parms->nb_antennas_rx*sizeof(int32_t*));
-    if (ue_common_vars->rxdataF2) {
-#ifdef DEBUG_PHY
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF2 allocated at %p\n", ue_common_vars->rxdataF2);
-#endif
-    }
-    else {
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF2 not allocated\n");
-      return(-1);
-    }
-
-    
-    for (i=0; i<frame_parms->nb_antennas_rx; i++) {
-      //RK 2 times because of output format of FFT!  We should get rid of this
-      ue_common_vars->rxdataF2[i] = (int32_t*)malloc16(2*sizeof(int32_t)*(frame_parms->ofdm_symbol_size*frame_parms->symbols_per_tti*10));
-      if (ue_common_vars->rxdataF2[i]) {
-#ifdef DEBUG_PHY
-	msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF2[%d] allocated at %p\n",i,ue_common_vars->rxdataF2[i]);
-#endif
-      }
-      else {
-	msg("[openair][LTE_PHY][INIT] ue_common_vars->rxdataF2[%d] not allocated\n",i);
-	return(-1);
-      }
+      // RK 2 times because of output format of FFT!
+      // FIXME We should get rid of this
+      ue_common_vars->rxdataF[i] = (int32_t*)malloc16_clear( 2*sizeof(int32_t)*(frame_parms->ofdm_symbol_size*14) );
+      // RK 2 times because of output format of FFT!  We should get rid of this
+      // FIXME We should get rid of this
+      ue_common_vars->rxdataF2[i] = (int32_t*)malloc16_clear( 2*sizeof(int32_t)*(frame_parms->ofdm_symbol_size*frame_parms->symbols_per_tti*10) );
     }
   }
-
     
   // Channel estimates  
-  for (eNB_id=0;eNB_id<7;eNB_id++) {
-    ue_common_vars->dl_ch_estimates[eNB_id] = (int32_t**)malloc16(8*sizeof(int32_t*));
-    if (ue_common_vars->dl_ch_estimates[eNB_id]) {
-#ifdef DEBUG_PHY
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates (eNB %hhu) allocated at %p\n",
-	  eNB_id,ue_common_vars->dl_ch_estimates[eNB_id]);
-#endif
-    }
-    else {
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates not allocated\n");
-      return(-1);
-    }
-    
-    AssertFatal( frame_parms->nb_antennas_rx <= 2, "hard coded allocation for ue_common_vars->dl_ch_estimates[eNB_id]" );
+  for (eNB_id=0; eNB_id<7; eNB_id++) {
+    ue_common_vars->dl_ch_estimates[eNB_id] = (int32_t**)malloc16_clear(8*sizeof(int32_t*));
+    ue_common_vars->dl_ch_estimates_time[eNB_id] = (int32_t**)malloc16_clear(8*sizeof(int32_t*));
+
     for (i=0; i<frame_parms->nb_antennas_rx; i++)
       for (j=0; j<4; j++) {
         int idx = (j<<1) + i;
-        ue_common_vars->dl_ch_estimates[eNB_id][idx] = (int32_t*)malloc16(frame_parms->symbols_per_tti*sizeof(int32_t)*(frame_parms->ofdm_symbol_size)+LTE_CE_FILTER_LENGTH);
-        if (ue_common_vars->dl_ch_estimates[eNB_id][idx]) {
-#ifdef DEBUG_PHY
-          msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates[%d][%d] allocated at %p\n",eNB_id,idx,
-              ue_common_vars->dl_ch_estimates[eNB_id][idx]);
-#endif
-	  
-          memset(ue_common_vars->dl_ch_estimates[eNB_id][idx],0,frame_parms->symbols_per_tti*sizeof(int32_t)*(frame_parms->ofdm_symbol_size)+LTE_CE_FILTER_LENGTH);
-	}
-	else {
-	  msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates[%d] not allocated\n",i);
-	  return(-1);
-	}
+        ue_common_vars->dl_ch_estimates[eNB_id][idx] = (int32_t*)malloc16_clear( frame_parms->symbols_per_tti*sizeof(int32_t)*(frame_parms->ofdm_symbol_size)+LTE_CE_FILTER_LENGTH );
+        ue_common_vars->dl_ch_estimates_time[eNB_id][idx] = (int32_t*)malloc16_clear( sizeof(int32_t)*(frame_parms->ofdm_symbol_size)*2 );
       }
-  }
-    
-  for (eNB_id=0;eNB_id<7;eNB_id++) {
-    ue_common_vars->dl_ch_estimates_time[eNB_id] = (int32_t**)malloc16(8*sizeof(int32_t*));
-    if (ue_common_vars->dl_ch_estimates_time[eNB_id]) {
-#ifdef DEBUG_PHY
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%hhu] allocated at %p\n",eNB_id,
-	  ue_common_vars->dl_ch_estimates_time[eNB_id]);
-#endif
-    }
-    else {
-      msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time not allocated_time\n");
-      return(-1);
-    }
-  
-    AssertFatal( frame_parms->nb_antennas_rx <= 2, "hard coded allocation for ue_common_vars->dl_ch_estimates_time[eNB_id]" );
-    for (i=0; i<frame_parms->nb_antennas_rx; i++)
-      for (j=0; j<4; j++) {
-        int idx = (j<<1) + i;
-        ue_common_vars->dl_ch_estimates_time[eNB_id][idx] = (int32_t*)malloc16(sizeof(int32_t)*(frame_parms->ofdm_symbol_size)*2);
-        if (ue_common_vars->dl_ch_estimates_time[eNB_id][idx]) {
-#ifdef DEBUG_PHY
-          msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%hhu][%d] allocated at %p\n",eNB_id,idx,
-              ue_common_vars->dl_ch_estimates_time[eNB_id][idx]);
-#endif
-	  
-          memset(ue_common_vars->dl_ch_estimates_time[eNB_id][idx],0,sizeof(int32_t)*(frame_parms->ofdm_symbol_size)*2);
-	}
-	else {
-          msg("[openair][LTE_PHY][INIT] ue_common_vars->dl_ch_estimates_time[%d][%d] not allocated\n",eNB_id,idx);
-	  return(-1);
-	}
-      }    
   }
     
   // DLSCH

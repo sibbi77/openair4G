@@ -684,11 +684,11 @@ typedef struct {
   int32_t **rxdata;
   /// \brief Holds the received data in the frequency domain.
   /// - first index: rx antenna [0..nb_antennas_rx[
-  /// - second index: symbol [0..]
+  /// - second index: symbol [0..28*ofdm_symbol_size[
   int32_t **rxdataF;
   /// \brief ?.
   /// - first index: rx antenna [0..nb_antennas_rx[
-  /// - second index: symbol [0..]
+  /// - second index: ? [0..20*ofdm_symbol_size*symbols_per_tti[
   int32_t **rxdataF2;
   /// \brief Hold the channel estimates in frequency domain.
   /// - first index: eNB id [0..6] (hard coded)
