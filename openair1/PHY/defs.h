@@ -75,6 +75,23 @@
 #define openair_free(y,x) free((y))
 #define PAGE_SIZE 4096
 
+#ifdef EXPRESSMIMO_TARGET
+    //! \brief Allocate \c size bytes of memory on the heap and zero it afterwards.
+    static inline void* malloc16_clear( size_t size ) {
+        void* ptr = malloc(size);
+        memset( ptr, 0, size );
+        return ptr;
+    }
+#else //EXPRESSMIMO_TARGET
+    //! \brief Allocate \c size bytes of memory on the heap with alignment 16 and zero it afterwards.
+    static inline void* malloc16_clear( size_t size ) {
+        void* ptr = memalign(16, size);
+        memset( ptr, 0, size );
+        return ptr;
+    }
+#endif //EXPRESSMIMO_TARGET
+
+
 #define PAGE_MASK 0xfffff000
 #define virt_to_phys(x) (x)
 
@@ -390,7 +407,7 @@ typedef struct
   pthread_t       thread_tx;
   pthread_t       thread_synch;
   uint32_t tx_total_gain_dB;
-  uint32_t rx_total_gain_dB; ///this is a function of rx_gain_mode (and the corresponding gain) and the rx_gain of the card
+  uint32_t rx_total_gain_dB; ///< this is a function of rx_gain_mode (and the corresponding gain) and the rx_gain of the card
   uint32_t rx_gain_max[4];
   /*
     rx_gain_t rx_gain_mode[4];*/
@@ -405,7 +422,7 @@ typedef struct
   uint8_t n_connected_eNB;
   uint8_t ho_initiated;
   uint8_t ho_triggered;
-  PHY_MEASUREMENTS PHY_measurements; /// Measurement variables 
+  PHY_MEASUREMENTS PHY_measurements; ///< Measurement variables
   LTE_DL_FRAME_PARMS  lte_frame_parms;
   LTE_DL_FRAME_PARMS  lte_frame_parms_before_ho; // frame parame before ho used to recover if ho fails
   LTE_UE_COMMON    lte_ue_common_vars;
