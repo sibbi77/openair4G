@@ -879,6 +879,7 @@ void phy_init_lte_ue__PDSCH( LTE_UE_PDSCH* const pdsch, const LTE_DL_FRAME_PARMS
   pdsch->pmi_ext = (uint8_t*)malloc16_clear( frame_parms->N_RB_DL );
   pdsch->llr[0] = (int16_t*)malloc16_clear( (8*((3*8*6144)+12))*sizeof(int16_t) );
   pdsch->llr128 = (int16_t**)malloc16_clear( sizeof(int16_t*) );
+  // FIXME! no further allocation for (int16_t*)pdsch->llr128 !!! expect SIGSEGV
 
   pdsch->rxdataF_ext         = (int32_t**)malloc16_clear( 8*sizeof(int32_t*) );
   pdsch->rxdataF_comp0       = (int32_t**)malloc16_clear( 8*sizeof(int32_t*) );
@@ -918,6 +919,7 @@ void phy_init_lte_ue__PDSCH_FLP( LTE_UE_PDSCH_FLP* const pdsch_flp, const LTE_DL
   pdsch_flp->llr[0] = (int16_t*)malloc16_clear( (8*((3*8*6144)+12))*sizeof(int16_t) );
   pdsch_flp->llr[1] = (int16_t*)malloc16_clear( (8*((3*8*6144)+12))*sizeof(int16_t) );
   pdsch_flp->llr128 = (int16_t**)malloc16_clear( sizeof(int16_t*) );
+  // FIXME! no further allocation for (int16_t*)pdsch_flp->llr128 !!! expect SIGSEGV
 
   pdsch_flp->pmi_ext             = (uint8_t*)malloc16_clear( frame_parms->N_RB_DL );
   pdsch_flp->rxdataF_ext         = (int32_t**)malloc16_clear( 8*sizeof(int32_t*) );
