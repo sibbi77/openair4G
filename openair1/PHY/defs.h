@@ -416,7 +416,8 @@ typedef struct
   pthread_t       thread_tx;
   pthread_t       thread_synch;
   uint32_t tx_total_gain_dB;
-  uint32_t rx_total_gain_dB; ///< this is a function of rx_gain_mode (and the corresponding gain) and the rx_gain of the card
+  /// \brief This is a function of rx_gain_mode (and the corresponding gain) and the rx_gain of the card.
+  uint32_t rx_total_gain_dB;
   /// \brief ?.
   /// - first index: ? [0..3] (hard coded)
   uint32_t rx_gain_max[4];
@@ -438,9 +439,11 @@ typedef struct
   uint8_t n_connected_eNB;
   uint8_t ho_initiated;
   uint8_t ho_triggered;
-  PHY_MEASUREMENTS PHY_measurements; ///< Measurement variables
+  /// \brief Measurement variables.
+  PHY_MEASUREMENTS PHY_measurements;
   LTE_DL_FRAME_PARMS  lte_frame_parms;
-  LTE_DL_FRAME_PARMS  lte_frame_parms_before_ho; ///< frame parame before ho used to recover if ho fails
+  /// \brief Frame parame before ho used to recover if ho fails.
+  LTE_DL_FRAME_PARMS  lte_frame_parms_before_ho;
   LTE_UE_COMMON    lte_ue_common_vars;
 
   LTE_UE_PDSCH     *lte_ue_pdsch_vars[NUMBER_OF_CONNECTED_eNB_MAX+1];
