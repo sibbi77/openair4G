@@ -67,23 +67,29 @@ int phy_init_top(LTE_DL_FRAME_PARMS *frame_parms);
 
 
 /*!
-\brief Allocate and Initialize the PHY variables relevant to the LTE implementation
-@param phy_vars_ue Pointer to UE Variables
+\brief Allocate and Initialize the PHY variables relevant to the LTE implementation.
+Only a subset of phy_vars_ue is initialized.
+@param[out] phy_vars_ue Pointer to UE Variables
 @param nb_connected_eNB Number of eNB that UE can process in one PDSCH demodulation subframe
 @param abstraction_flag 1 indicates memory should be allocated for abstracted MODEM
 @returns 0 on success
+@returns -1 if any memory allocation failed
+@note The current implementation will never return -1, but segfault.
  */
 int phy_init_lte_ue(PHY_VARS_UE *phy_vars_ue,
                     int          nb_connected_eNB,
                     uint8_t         abstraction_flag);
 
 /*!
-\brief Allocate and Initialize the PHY variables relevant to the LTE implementation (eNB)
-@param phy_vars_eNb Pointer to eNB Variables
+\brief Allocate and initialize the PHY variables relevant to the LTE implementation (eNB).
+Only a subset of phy_vars_eNb is initialized.
+@param[out] phy_vars_eNb Pointer to eNB Variables
 @param is_secondary_eNb Flag to indicate this eNB gets synch from another
-@param cooperation_flag
+@param cooperation_flag 0 for no cooperation, 1 for Delay Diversity and 2 for Distributed Alamouti
 @param abstraction_flag 1 indicates memory should be allocated for abstracted MODEM
 @returns 0 on success
+@returns -1 if any memory allocation failed
+@note The current implementation will never return -1, but segfault.
  */
 int phy_init_lte_eNB(PHY_VARS_eNB *phy_vars_eNb,
                      unsigned char is_secondary_eNb,

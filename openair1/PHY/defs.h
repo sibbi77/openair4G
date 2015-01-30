@@ -46,6 +46,7 @@
 #include <string.h>
 #include <math.h>
 //#include <complex.h>
+#include "assertions.h"
 #ifdef MEX
 # define msg mexPrintf
 #else
@@ -77,15 +78,19 @@
 
 #ifdef EXPRESSMIMO_TARGET
     //! \brief Allocate \c size bytes of memory on the heap and zero it afterwards.
+    //! If no more memory is available, this function will terminate the program with an assertion error.
     static inline void* malloc16_clear( size_t size ) {
         void* ptr = malloc(size);
+        DevAssert(ptr);
         memset( ptr, 0, size );
         return ptr;
     }
 #else //EXPRESSMIMO_TARGET
     //! \brief Allocate \c size bytes of memory on the heap with alignment 16 and zero it afterwards.
+    //! If no more memory is available, this function will terminate the program with an assertion error.
     static inline void* malloc16_clear( size_t size ) {
         void* ptr = memalign(16, size);
+        DevAssert(ptr);
         memset( ptr, 0, size );
         return ptr;
     }
@@ -412,11 +417,18 @@ typedef struct
   pthread_t       thread_synch;
   uint32_t tx_total_gain_dB;
   uint32_t rx_total_gain_dB; ///< this is a function of rx_gain_mode (and the corresponding gain) and the rx_gain of the card
+  /// \brief ?.
+  /// - first index: ? [0..3] (hard coded)
   uint32_t rx_gain_max[4];
   /*
     rx_gain_t rx_gain_mode[4];*/
+  /// \brief ?.
+  /// - first index: ? [0..3] (hard coded)
   uint32_t rx_gain_med[4];
+  /// \brief ?.
+  /// - first index: ? [0..3] (hard coded)
   uint32_t rx_gain_byp[4];
+  /// \brief ?.
   int8_t tx_power_dBm;
   int tx_total_RE;
   int8_t tx_power_max_dBm;
@@ -480,9 +492,17 @@ typedef struct
   //unsigned char *Msg3_ptr[NUMBER_OF_CONNECTED_eNB_MAX];
   PRACH_RESOURCES_t *prach_resources[NUMBER_OF_CONNECTED_eNB_MAX];
   int turbo_iterations, turbo_cntl_iterations;
+  /// \brief ?.
+  /// - first index: eNB [0..NUMBER_OF_CONNECTED_eNB_MAX[ (hard coded)
   uint32_t total_TBS[NUMBER_OF_CONNECTED_eNB_MAX];
+  /// \brief ?.
+  /// - first index: eNB [0..NUMBER_OF_CONNECTED_eNB_MAX[ (hard coded)
   uint32_t total_TBS_last[NUMBER_OF_CONNECTED_eNB_MAX];
+  /// \brief ?.
+  /// - first index: eNB [0..NUMBER_OF_CONNECTED_eNB_MAX[ (hard coded)
   uint32_t bitrate[NUMBER_OF_CONNECTED_eNB_MAX];
+  /// \brief ?.
+  /// - first index: eNB [0..NUMBER_OF_CONNECTED_eNB_MAX[ (hard coded)
   uint32_t total_received_bits[NUMBER_OF_CONNECTED_eNB_MAX];
   int dlsch_errors[NUMBER_OF_CONNECTED_eNB_MAX];
   int dlsch_errors_last[NUMBER_OF_CONNECTED_eNB_MAX];
@@ -522,10 +542,12 @@ typedef struct
   /// Flag to initialize averaging of PHY measurements
   int init_averaging; 
 
-  /// sinr for all subcarriers of the current link (used only for abstraction)
+  /// \brief sinr for all subcarriers of the current link (used only for abstraction).
+  /// - first index: ? [0..12*N_RB_DL[
   double *sinr_dB;
   
-   /// sinr for all subcarriers of first symbol for the CQI Calculation 
+  /// \brief sinr for all subcarriers of first symbol for the CQI Calculation.
+  /// - first index: ? [0..12*N_RB_DL[
   double *sinr_CQI_dB;
 
   /// sinr_effective used for CQI calulcation

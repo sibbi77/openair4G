@@ -743,17 +743,17 @@ typedef struct {
   /// \brief Holds the transmit data in time domain.
   /// For IFFT_FPGA this points to the same memory as PHY_vars->tx_vars[a].TX_DMA_BUFFER.
   /// - first index: tx antenna [0..nb_antennas_tx[
-  /// - second index: sample [0..]
+  /// - second index: sample [0..FRAME_LENGTH_COMPLEX_SAMPLES[
   int32_t **txdata;
   /// \brief Holds the transmit data in the frequency domain.
   /// For IFFT_FPGA this points to the same memory as PHY_vars->rx_vars[a].RX_DMA_BUFFER.
   /// - first index: tx antenna [0..nb_antennas_tx[
-  /// - second index: sample [0..]
+  /// - second index: sample [0..FRAME_LENGTH_COMPLEX_SAMPLES_NO_PREFIX[
   mod_sym_t **txdataF;
   /// \brief Holds the received data in time domain.
   /// Should point to the same memory as PHY_vars->rx_vars[a].RX_DMA_BUFFER.
   /// - first index: rx antenna [0..nb_antennas_rx[
-  /// - second index: sample [0..]
+  /// - second index: sample [0..FRAME_LENGTH_COMPLEX_SAMPLES+2048[
   int32_t **rxdata;
   /// \brief Holds the received data in the frequency domain.
   /// - first index: rx antenna [0..nb_antennas_rx[
@@ -766,12 +766,12 @@ typedef struct {
   /// \brief Hold the channel estimates in frequency domain.
   /// - first index: eNB id [0..6] (hard coded)
   /// - second index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - third index: samples? [0..]
+  /// - third index: samples? [0..symbols_per_tti*(ofdm_symbol_size+LTE_CE_FILTER_LENGTH)[
   int32_t **dl_ch_estimates[7];
   /// \brief Hold the channel estimates in time domain (used for tracking).
   /// - first index: eNB id [0..6] (hard coded)
   /// - second index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - third index: samples? [0..]
+  /// - third index: samples? [0..2*ofdm_symbol_size[
   int32_t **dl_ch_estimates_time[7];
   /// holds output of the sync correlator  
   int32_t *sync_corr;
@@ -784,43 +784,43 @@ typedef struct {
 typedef struct {
   /// \brief Received frequency-domain signal after extraction.
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **rxdataF_ext;
   /// \brief Received frequency-domain signal after extraction and channel compensation.
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **rxdataF_comp0;
   /// \brief Received frequency-domain signal after extraction and channel compensation.
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
   /// - second index: ? [0..7] (hard coded)
-  /// - third index: ? [0..]
+  /// - third index: ? [0..168*N_RB_DL[
   int32_t **rxdataF_comp1[8];
   /// \brief Downlink channel estimates extracted in PRBS.
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **dl_ch_estimates_ext;
   /// \brief Downlink cross-correlation of MIMO channel estimates (unquantized PMI) extracted in PRBS.
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **dl_ch_rho_ext;
   /// \brief Downlink PMIs extracted in PRBS and grouped in subbands.
   /// - first index: ressource block [0..N_RB_DL[
   uint8_t *pmi_ext;
   /// \brief Magnitude of Downlink Channel first layer (16QAM level/First 64QAM level).
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **dl_ch_mag0;
   /// \brief Magnitude of Downlink Channel second layer (16QAM level/First 64QAM level).
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **dl_ch_mag1;
   /// \brief Magnitude of Downlink Channel, first layer (2nd 64QAM level).
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **dl_ch_magb0;
   /// \brief Magnitude of Downlink Channel second layer (2nd 64QAM level).
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **dl_ch_magb1;
   /// \brief Cross-correlation of two eNB signals.
   /// - first index: rx antenna [0..nb_antennas_rx[
@@ -835,9 +835,10 @@ typedef struct {
   /// \f$\log_2(\max|H_i|^2)\f$
   int16_t log2_maxh;
   /// \brief LLR shifts for subband scaling.
-  /// - first index: ? [0..]
+  /// - first index: ? [0..168*N_RB_DL[
   uint8_t *llr_shifts;
-  /// Pointer to LLR shifts
+  /// \brief Pointer to LLR shifts.
+  /// - first index: ? [0..168*N_RB_DL[
   uint8_t *llr_shifts_p;
   /// \brief Pointers to llr vectors (128-bit alignment).
   /// - first index: ? [0..0] (hard coded)
@@ -898,29 +899,37 @@ typedef struct {
 } LTE_UE_PDSCH_FLP;
 
 typedef struct {
-  /// pointers to extracted PDCCH symbols in frequency-domain
+  /// \brief Pointers to extracted PDCCH symbols in frequency-domain.
+    /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+    /// - second index: ? [0..168*N_RB_DL[
   int32_t **rxdataF_ext;
   /// \brief Pointers to extracted and compensated PDCCH symbols in frequency-domain.
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **rxdataF_comp;
-  /// pointers to extracted channel estimates of PDCCH symbols
+  /// \brief Pointers to extracted channel estimates of PDCCH symbols.
+  /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **dl_ch_estimates_ext;
   /// \brief Pointers to channel cross-correlation vectors for multi-eNB detection.
   /// - first index: ? [0..7] (hard coded) FIXME! accessed via \c nb_antennas_rx
-  /// - second index: ? [0..]
+  /// - second index: ? [0..168*N_RB_DL[
   int32_t **dl_ch_rho_ext;
   /// \brief Pointers to channel cross-correlation vectors for multi-eNB detection.
   /// - first index: rx antenna [0..nb_antennas_rx[
   /// - second index: ? [0..]
   int32_t **rho;
-  /// pointer to llrs, 4-bit resolution
+  /// \brief Pointer to llrs, 4-bit resolution.
+  /// - first index: ? [0..48*N_RB_DL[
   uint16_t *llr;
-  /// pointer to llrs, 16-bit resolution
+  /// \brief Pointer to llrs, 16-bit resolution.
+  /// - first index: ? [0..96*N_RB_DL[
   uint16_t *llr16;
-  /// \f$\overline{w}\f$ from 36-211
+  /// \brief \f$\overline{w}\f$ from 36-211.
+  /// - first index: ? [0..48*N_RB_DL[
   uint16_t *wbar;
-  /// PDCCH/DCI e-sequence (input to rate matching)
+  /// \brief PDCCH/DCI e-sequence (input to rate matching).
+  /// - first index: ? [0..96*N_RB_DL[
   int8_t *e_rx;
   /// number of PDCCH symbols in current subframe
   uint8_t num_pdcch_symbols;
@@ -964,13 +973,13 @@ typedef struct {
   /// \brief Pointer to PBCH decoded output.
   /// - first index: ? [0..63] (hard coded)
   uint8_t *decoded_output;
-  /// Total number of PDU errors
+  /// \brief Total number of PDU errors.
   uint32_t pdu_errors;
-  /// Total number of PDU errors 128 frames ago
+  /// \brief Total number of PDU errors 128 frames ago.
   uint32_t pdu_errors_last;
-  /// Total number of consecutive PDU errors
+  /// \brief Total number of consecutive PDU errors.
   uint32_t pdu_errors_conseq;
-  /// FER (in percent) 
+  /// \brief FER (in percent) .
   uint32_t pdu_fer;
 } LTE_UE_PBCH;
 
