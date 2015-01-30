@@ -94,9 +94,9 @@ void apply_7_5_kHz(PHY_VARS_UE *phy_vars_ue,int32_t*txdata,uint8_t slot) {
       // Real part of complex multiplication (note: 7_5kHz signal is conjugated for this to work)
       mmtmp_im = _mm_shufflelo_epi16(*kHz7_5ptr128,_MM_SHUFFLE(2,3,0,1));
       mmtmp_im = _mm_shufflehi_epi16(mmtmp_im,_MM_SHUFFLE(2,3,0,1));
-      mmtmp_im = _mm_sign_epi16(mmtmp_im,*(__m128i*)&conjugate75[0]);
+      mmtmp_im = _mm_sign_epi16(mmtmp_im,*(__m128i*)&conjugate75[0]); // flip the sign of 1., 3., 5. and 7. integer
       mmtmp_im = _mm_madd_epi16(mmtmp_im,txptr128[0]);
-      mmtmp_re = _mm_srai_epi32(mmtmp_re,15);
+      mmtmp_re = _mm_srai_epi32(mmtmp_re,15); // Shifts the 4 signed 32-bit integers in a right by count bits while shifting in the sign bit.
       mmtmp_im = _mm_srai_epi32(mmtmp_im,15);
       mmtmp_re2 = _mm_unpacklo_epi32(mmtmp_re,mmtmp_im);
       mmtmp_im2 = _mm_unpackhi_epi32(mmtmp_re,mmtmp_im);
@@ -120,7 +120,7 @@ void apply_7_5_kHz(PHY_VARS_UE *phy_vars_ue,int32_t*txdata,uint8_t slot) {
 	((short*)kHz7_5ptr128)[6],
 	((short*)kHz7_5ptr128)[7]);*/
       
-      txptr128[0] = _mm_packs_epi32(mmtmp_re2,mmtmp_im2);
+      txptr128[0] = _mm_packs_epi32(mmtmp_re2,mmtmp_im2); // Packs the 8 signed 32-bit integers from a and b into signed 16-bit integers and saturates.
       /*	  printf("%(%d,%d) (%d,%d) (%d,%d) (%d,%d)\n",
 		  ((short*)txptr128)[0],
 		  ((short*)txptr128)[1],
@@ -214,6 +214,7 @@ void remove_7_5_kHz(PHY_VARS_eNB *phy_vars_eNB,uint8_t slot) {
 
 
 
+// FIXME not used anywhere
 void apply_625_Hz(PHY_VARS_UE *phy_vars_ue,int16_t *prach) {
 
   uint32_t *Hz625ptr;
@@ -331,6 +332,7 @@ void apply_625_Hz(PHY_VARS_UE *phy_vars_ue,int16_t *prach) {
   }
 }
 
+// FIXME not used anywhere
 void remove_625_Hz(PHY_VARS_eNB *phy_vars_eNB,int16_t *prach) {
 
   uint32_t *Hz625ptr;
@@ -449,6 +451,7 @@ void remove_625_Hz(PHY_VARS_eNB *phy_vars_eNB,int16_t *prach) {
 }
 
 
+// FIXME not used anywhere
 void init_prach625(LTE_DL_FRAME_PARMS *frame_parms) {
 
   uint32_t len,i,Ncp;
