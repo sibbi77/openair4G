@@ -48,6 +48,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
     oai.send_recv('cd $OPENAIR_TARGETS;')   
  
     try:
+        log.start()
         test = '00'
         name = 'Check oai.svn.add'
         conf = 'svn st -q | grep makefile'
@@ -68,6 +69,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
     oai.send('mkdir ' + logdir + ';')
     
     try:
+        log.start()
         test = '01'
         name = 'Compile oai.rel8.make'
         conf = 'make'
@@ -84,8 +86,9 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
         rv = 0
     else:
         log.ok(case, test, name, conf, '', logfile)
-        
+
     try:
+        log.start()
         test = '02'
         name = 'Compile oai.rel8.nas.make'
         conf = 'make nasmesh_fix; make NAS=1'
@@ -112,6 +115,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
     oai.send('cd RT/USER;')   
 
     try:
+        log.start()
         test = '03'
         name = 'Compile oai.rel8.rf.make' 
         conf = 'make RTAI=0 EXMIMO=1 Rel8=1'
@@ -131,6 +135,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
     oai.send('cd SIMULATION/LTE_PHY;')   
 
     try:
+        log.start()
         test = '04'
         name = 'Compile oai.rel8.phy.dlsim.make' 
         conf = 'make dlsim'
@@ -148,6 +153,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
         log.ok(case, test, name, conf, '', logfile)
 
     try:
+        log.start()
         test = '05'
         name = 'Compile oai.rel8.phy.ulsim.make' 
         conf = 'make ulsim'
@@ -168,6 +174,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
     oai.send('cd SIMU/USER;')   
     
     try:
+        log.start()
         test = '06'
         name = 'Compile oai.rel8.itti.make' 
         conf = 'make DISABLE_XER_PRINT=1 ENABLE_ITTI=1 Rel8=1'
@@ -185,6 +192,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
         log.ok(case, test, name, conf, '', logfile)
 
     try:
+        log.start()
         test = '07'
         name = 'Compile oai.rel10.make' 
         conf = 'make RLC_STOP_ON_LOST_PDU=1 Rel10=1'
@@ -204,6 +212,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
         log.ok(case, test, name, conf, '', logfile)
 
     try:
+        log.start()
         test = '08'
         name = 'Compile oai.rel10.itti.make' 
         conf = 'make DISABLE_XER_PRINT=1 ENABLE_ITTI=1 RLC_STOP_ON_LOST_PDU=1 Rel10=1'
@@ -219,7 +228,9 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
         rv = 0
     else:
         log.ok(case, test, name, conf, '', logfile)
+
     try:
+        log.start()
         test = '13'
         name = 'Compile oai_nw_ether IP driver' 
         conf = 'make oai_nw_drv'
@@ -237,7 +248,9 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
         log.fail(case, test, name, conf, e.value, diag, logfile,trace)
     else:
         log.ok(case, test, name, conf, '', logfile)
+    
     try:
+        log.start()
         test = '14'
         name = 'Compile oai.rel8.itti.ral.make' 
         conf = 'make DISABLE_XER_PRINT=1 NAS=1 OAI_NW_DRIVER_TYPE_ETHERNET=1 ENABLE_ITTI=1 USER_MODE=1 OPENAIR2=1 ENABLE_RAL=1 MIH_C_MEDIEVAL_EXTENSIONS=1 RLC_STOP_ON_LOST_PDU=1 Rel8=1'
@@ -254,7 +267,9 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
         log.fail(case, test, name, conf, e.value, diag, logfile,trace)
     else:
         log.ok(case, test, name, conf, '', logfile)
+
     try:
+        log.start()
         test = '15'
         name = 'Compile oai.rel10.itti.ral.make' 
         conf = 'make DISABLE_XER_PRINT=1 NAS=1 OAI_NW_DRIVER_TYPE_ETHERNET=1 ENABLE_ITTI=1 USER_MODE=1 OPENAIR2=1 ENABLE_RAL=1 MIH_C_MEDIEVAL_EXTENSIONS=1 RLC_STOP_ON_LOST_PDU=1 Rel10=1'
