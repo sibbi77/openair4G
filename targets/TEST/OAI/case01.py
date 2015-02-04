@@ -100,6 +100,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
         trace = logdir + '/log_' + case + test + '_1.txt;'
         tee = ' 2>&1 | tee ' + trace
         oai.send_expect_false('make nasmesh_fix' + tee, makerr1,  60)
+        oai.send('cp $OPENAIR2_DIR/NAS/DRIVER/MESH/nasmesh.ko .')
         trace = logdir + '/log_' + case + test + '_2.txt;'
         tee = ' 2>&1 | tee ' + trace
         oai.send_expect_false('make NAS=1 JF=1 -j4' + tee, makerr1,  1500)
