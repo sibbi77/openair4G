@@ -26,7 +26,7 @@ COMMON_CFLAGS		= \
 
 # the code already uses C99 integer type (like int32_t)
 # switch on full support for C99 + GNU extensions
-CFLAGS += -std=gnu99
+#CFLAGS += -std=gnu99
 
 ITTI_MESSAGES_H		= messages_xml.h
 ITTI_MESSAGES_XML	= messages.xml

@@ -325,7 +325,7 @@ $(OAISIM_COMPILED_OBJECTS): | objsdir
 $(OAISIM_COMPILED_OBJECTS) $(OAISIM_PAD_OBJS): %.o : $$(subst $(OBJS_DIR), $(OPENAIR_HOME), $$*.c)
 	@echo Compiling $<
 	@if [ ! -d $(dir $@) ]; then mkdir -p $(dir $@); fi;
-	@$(CC) -c $(CFLAGS) $(EXTRA_CFLAGS) -DPHY_CONTEXT=1 $(INCLUDES) -o $@ $<
+	$(CC) -E $(CFLAGS) $(EXTRA_CFLAGS) -DPHY_CONTEXT=1 $(INCLUDES) -o $@ $<
 	@$(CC) -MM $(CFLAGS) $(EXTRA_CFLAGS) -DPHY_CONTEXT=1 $(INCLUDES) $< > $*.d
 	@mv -f $*.d $*.d.tmp
 	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d

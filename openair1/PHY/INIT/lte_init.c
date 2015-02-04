@@ -892,9 +892,11 @@ void phy_init_lte_ue__PDSCH( LTE_UE_PDSCH* const pdsch, const LTE_DL_FRAME_PARMS
   // the allocated memory size is fixed:
   AssertFatal( frame_parms->nb_antennas_rx <= 2, "nb_antennas_rx > 2" );
 
-  for (int i=0; i<frame_parms->nb_antennas_rx; i++) {
+  int i;
+  for (i=0; i<frame_parms->nb_antennas_rx; i++) {
     pdsch->rho[i]     = (int32_t*)malloc16_clear( sizeof(int32_t)*(frame_parms->N_RB_DL*12*7*2) );
-    for (int j=0; j<4; j++) { //frame_parms->nb_antennas_tx; j++)
+    int j;
+    for (j=0; j<4; j++) { //frame_parms->nb_antennas_tx; j++)
       const int idx = (j<<1)+i;
       const size_t num = 7*2*frame_parms->N_RB_DL*12;
       pdsch->rxdataF_ext[idx]         = (int32_t*)malloc16_clear( sizeof(int32_t) * num );
@@ -933,9 +935,11 @@ void phy_init_lte_ue__PDSCH_FLP( LTE_UE_PDSCH_FLP* const pdsch_flp, const LTE_DL
   // the allocated memory size is fixed:
   AssertFatal( frame_parms->nb_antennas_rx <= 2, "nb_antennas_rx > 2" );
 
-  for (int i=0; i<frame_parms->nb_antennas_rx; i++) {
+  int i;
+  for (i=0; i<frame_parms->nb_antennas_rx; i++) {
       pdsch_flp->rho[i] = (double*)malloc16_clear( sizeof(double)*(frame_parms->N_RB_DL*12*7*2) );
-      for (int j=0; j<4; j++) { //frame_parms->nb_antennas_tx; j++)
+      int j;
+      for (j=0; j<4; j++) { //frame_parms->nb_antennas_tx; j++)
           const int idx = (j<<1)+i;
           const size_t num = 7*2*frame_parms->N_RB_DL*12;
           pdsch_flp->rxdataF_ext[idx]         = (int32_t*)malloc16_clear( sizeof(int32_t) * num );
