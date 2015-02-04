@@ -184,6 +184,7 @@ class openair(core):
             print "Error removing oai network driver module:", val
    
     def driver(self,oai,user,pw):
+        print "+++ openair.driver(): inserting nasmesh.ko"
         pwd = oai.send_recv('pwd') 
         oai.send('cd $OPENAIR_TARGETS;')   
         oai.send('cd SIMU/USER;')   
@@ -195,6 +196,8 @@ class openair(core):
                 
         except Error, val:
             print "Error inserting oai network driver module:", val
+        print "+++ openair.driver(): " + oai.send_recv('lsmod')
+        print "+++ openair.driver(): " + oai.send_recv('pwd')
     
     def cleandir (self, logdir,debug) :
         
