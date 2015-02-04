@@ -65,6 +65,10 @@ class bcolors:
     fail = '\033[91m'
     normal = '\033[0m'
     
+    def __init__(self):
+        if not sys.stdout.isatty():
+            self.disable()
+
     def disable(self):
         self.header = ''
         self.okblue = ''
