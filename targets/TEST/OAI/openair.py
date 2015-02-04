@@ -192,7 +192,7 @@ class openair(core):
             if user == 'root' : 
                 oai.send_nowait('insmod ./nasmesh.ko;')
             else :
-                oai.send('echo '+pw+ ' | sudo -S insmod ./nasmesh.ko;')
+                print "+++ openair.driver(): " + oai.send_recv('echo '+pw+ ' | sudo -S insmod ./nasmesh.ko;')
                 
         except Error, val:
             print "Error inserting oai network driver module:", val
