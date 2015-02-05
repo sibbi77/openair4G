@@ -1,0 +1,8 @@
+*.o.cmd
+nasmesh.mod
+Module.symvers
+*.ko.cmd
+RB_TOOL/rb_tool
+modules.order
+nasmesh.ko
+nasmesh.mod.c

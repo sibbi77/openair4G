@@ -1174,6 +1174,11 @@ main (int argc, char **argv) {
     //SINRpost = fopen(SINRpost_fname,"w");
     // variables/flags which are set by user on command-line
 
+#ifdef DEBUG
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+#endif
+
 #ifdef SMBV
     strcpy(smbv_ip,DEFAULT_SMBV_IP);
 #endif
@@ -1214,11 +1219,13 @@ main (int argc, char **argv) {
     int err;
     sigset_t sigblock;
     sigemptyset (&sigblock);
+#ifndef DEBUG
     sigaddset (&sigblock, SIGHUP);
     sigaddset (&sigblock, SIGINT);
     sigaddset (&sigblock, SIGTERM);
     sigaddset (&sigblock, SIGQUIT);
     //sigaddset(&sigblock, SIGKILL);
+#endif
 
     if ((err = pthread_sigmask (SIG_BLOCK, &sigblock, NULL)) != 0) {
         printf ("SIG_BLOCK error\n");

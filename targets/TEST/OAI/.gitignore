@@ -1,0 +1,5 @@
+*.pyc
+pre-ci-logs-*/
+*.py~
+*.txt
+*.txt.xml
