@@ -573,6 +573,11 @@ void ulsch_extract_rbs_single(int32_t **rxdataF,
     msg("ulsch_extract_rbs_single: 2*nb_rb1 = %d, 2*nb_rb2 = %d\n",nb_rb1,nb_rb2);
 #endif
 
+    printf( "rxdataF_ext = %p\n", rxdataF_ext );
+    printf( "aarx = %"PRIu8"\n", aarx );
+    printf( "rxdataF_ext[aarx] = %p\n", rxdataF_ext[aarx] );
+    printf( "(symbol*frame_parms->N_RB_UL*12) = %i\n", (symbol*frame_parms->N_RB_UL*12) );
+    printf( "rxdataF_ext[aarx][(symbol*frame_parms->N_RB_UL*12)] = %"PRIi32"\n", rxdataF_ext[aarx][(symbol*frame_parms->N_RB_UL*12)] );
     rxF_ext   = &rxdataF_ext[aarx][(symbol*frame_parms->N_RB_UL*12)];
     if (nb_rb1) {
       rxF = &rxdataF[aarx][(first_rb*12 + frame_parms->first_carrier_offset + symbol*frame_parms->ofdm_symbol_size)];
