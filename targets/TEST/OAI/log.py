@@ -94,14 +94,13 @@ def sleep(seconds):
         
 def start():
     """Start the timer for the following testcase."""
+    global testcase_starttime
     testcase_starttime = time.time()
 
 def set_debug_level(level):
     debug = level
 
 def statistics(logfile):
-    global start_time
-    
     #if stats['passed'] == 0:
      #   print "no test executed...exiting"
       #  sys.exit()

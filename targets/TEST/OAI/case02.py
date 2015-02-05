@@ -112,6 +112,7 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
 
         for i in range(NUM_eNB) :
             for j in range(NUM_UE) :
+                print 'loop i=' + repr(i) + ' j=' + repr(j)
                 conf = '-a -A AWGN -l7 -u' + str(j+1) +' -b'+ str(i+1)
                 trace = logdir + '/log_' + host + case + test + '_' + str(i) + str(j) + '.txt'
                 tee = ' 2>&1 > ' + trace
@@ -127,12 +128,14 @@ def execute(oai, user, pw, host, logfile,logdir,debug):
 
                     oai.send_expect('ping 10.0.'+str(j+1)+'.'+str(NUM_eNB+i+1) + ' -c ' +  str(random.randint(2, 10))+ ' -s ' + str(random.randint(128, 1500)) + tee_ping, ' 0% packet loss', 20)
                 if user == 'root' :
-                    oai.send('pkill oaisim.rel8.nas.'+host)
-                    oai.send('pkill oaisim.rel8.nas.'+host)
-                else :
-                    oai.send('echo '+pw+ ' | sudo -S pkill oaisim.rel8.nas.'+host)
+                    oai.send('pkill -f oaisim.rel8.nas.'+host)
                     time.sleep(1)
-                    oai.send('echo '+pw+ ' | sudo -S pkill oaisim.rel8.nas.'+host)
+                    oai.send('pkill -f -SIGKILL oaisim.rel8.nas.'+host)
+                else :
+                    print oai.send_recv('echo '+pw+ ' | sudo -S pkill -f oaisim.rel8.nas.'+host)
+                    time.sleep(1)
+                    print oai.send_recv('echo '+pw+ ' | sudo -S pkill -f -SIGKILL oaisim.rel8.nas.'+host)
+                print oai.send_recv( 'ps ax;' )
         
         oai.rm_driver(oai,user,pw)
 
