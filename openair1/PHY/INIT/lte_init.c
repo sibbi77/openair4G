@@ -1285,7 +1285,7 @@ int phy_init_lte_eNB(PHY_VARS_eNB *phy_vars_eNB,
  
   AssertFatal( frame_parms->nb_antennas_rx <= sizeof(eNB_prach_vars->rxsigF), "nb_antennas_rx too large" );
   for (i=0; i<frame_parms->nb_antennas_rx; i++) {
-    eNB_prach_vars->rxsigF[i] = (int16_t*)malloc16_clear( frame_parms->ofdm_symbol_size*12*sizeof(int16_t) );
+    eNB_prach_vars->rxsigF[i] = (int16_t*)malloc16_clear( frame_parms->ofdm_symbol_size*12*2*sizeof(int16_t) );
 #ifdef DEBUG_PHY
     msg("[openair][LTE_PHY][INIT] prach_vars->rxsigF[%d] = %p\n",i,eNB_prach_vars->rxsigF[i]);
 #endif
