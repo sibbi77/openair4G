@@ -1164,15 +1164,7 @@ l2l1_task (void *args_p) {
 int
 main (int argc, char **argv) {
 
-    int32_t i;
-    // pointers signal buffers (s = transmit, r,r0 = receive)
     clock_t t;
-
-    //FILE *SINRpost;
-    //char SINRpost_fname[512];
-    // sprintf(SINRpost_fname,"postprocSINR.m");
-    //SINRpost = fopen(SINRpost_fname,"w");
-    // variables/flags which are set by user on command-line
 
 #ifdef DEBUG
     setvbuf(stdout, NULL, _IONBF, 0);
@@ -1183,16 +1175,10 @@ main (int argc, char **argv) {
     strcpy(smbv_ip,DEFAULT_SMBV_IP);
 #endif
 
-    // time calibration for soft realtime mode  
-    char pbch_file_path[512];
-    FILE *pbch_file_fd;
-
 #ifdef PROC
     int node_id;
     int port,Process_Flag=0,wgt,Channel_Flag=0,temp;
 #endif
-    //double **s_re2[MAX_eNB+MAX_UE], **s_im2[MAX_eNB+MAX_UE], **r_re2[MAX_eNB+MAX_UE], **r_im2[MAX_eNB+MAX_UE], **r_re02, **r_im02;
-    //double **r_re0_d[MAX_UE][MAX_eNB], **r_im0_d[MAX_UE][MAX_eNB], **r_re0_u[MAX_eNB][MAX_UE],**r_im0_u[MAX_eNB][MAX_UE];
     //default parameters
     rate_adaptation_flag = 0;
     oai_emulation.info.n_frames = 0xffff; //1024;          //10;
@@ -1304,7 +1290,6 @@ main (int argc, char **argv) {
     LOG_I(EMU, "Duration of the simulation: %f seconds\n",
           ((float) t) / CLOCKS_PER_SEC);
 
-    //  fclose(SINRpost);
     LOG_N(EMU,
           ">>>>>>>>>>>>>>>>>>>>>>>>>>> OAIEMU Ending <<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
 
