@@ -1,0 +1,10 @@
+*.m
+pre-ci-logs-*/
+messages.xml
+messages_xml.h
+nasmesh.ko
+oai_nw_drv.ko
+oaisim
+oaisim.rel8.*
+oaisim.rel10.*
+objs/

@@ -1,0 +1,7 @@
+*.cmd
+.tmp_versions/
+Module.symvers
+modules.order
+oai_nw_drv.ko
+oai_nw_drv.mod.c
+
