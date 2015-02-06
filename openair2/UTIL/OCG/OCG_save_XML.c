@@ -50,7 +50,7 @@
 int save_XML(int copy_or_move, char *src_file, char *output_dir, char *filename) {
 
 	FILE *fs, *ft;
-	char ch;
+	int ch;
 	char dst_file[FILENAME_LENGTH_MAX + DIR_LENGTH_MAX + 32] = "";
 	char XML_saving_dir[FILENAME_LENGTH_MAX + DIR_LENGTH_MAX + 32] = "";
 	

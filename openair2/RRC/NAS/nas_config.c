@@ -77,7 +77,7 @@ char* getNetMask  (){
 }
 
 void setBroadcastAddress (char* baseAddr){
-  strcpy(baseAddr, baseAddr);
+  strcpy(broadcastAddr, baseAddr);
 }
 
 char* getBroadcastAddress (){
