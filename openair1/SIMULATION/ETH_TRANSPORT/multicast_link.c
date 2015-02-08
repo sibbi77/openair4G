@@ -100,7 +100,8 @@ multicast_link_init(void)
     // struct ifreq ifr;
 
     for (group = 0; group < MULTICAST_LINK_NUM_GROUPS; group++) {
-        strcpy (group_list[group].host_addr, multicast_group_list[group]);
+        strncpy (group_list[group].host_addr, multicast_group_list[group], sizeof(group_list[group].host_addr));
+        group_list[group].host_addr[sizeof(group_list[group].host_addr) - 1] = 0; // terminate string
         group_list[group].port = 46014 + group;
         group_list[group].socket = make_socket_inet(
             SOCK_DGRAM,
