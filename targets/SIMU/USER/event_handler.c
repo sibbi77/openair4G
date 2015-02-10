@@ -1669,7 +1669,7 @@ oai_emulation->topology_config.mobility.UE_mobility.UE_moving_dynamics.max_speed
 			}
 			else if(!strcmp((char *) event.key, "sumo_config_file"))
 			{       
- 				sprintf(oai_emulation->topology_config.mobility.UE_mobility.sumo_config.file,"%s/UTIL/OMG/SUMO/SCENARIOS/scen.sumo.cfg",getenv("OPENAIR2_DIR"));
+				snprintf( oai_emulation->topology_config.mobility.UE_mobility.sumo_config.file, 256, "%s/UTIL/OMG/SUMO/SCENARIOS/scen.sumo.cfg", getenv("OPENAIR2_DIR") );
 			}
 			else if(!strcmp((char *) event.key, "sumo_config_start"))
 			{
