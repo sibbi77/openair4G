@@ -2193,6 +2193,7 @@ void set_ue_dai(sub_frame_t   subframeP,
   case 0:
     if ((subframeP==0)||(subframeP==1)||(subframeP==3)||(subframeP==5)||(subframeP==6)||(subframeP==8))
       UE_list->UE_template[CC_id][UE_id].DAI = 0;
+    break;
   case 1:
     if ((subframeP==0)||(subframeP==4)||(subframeP==5)||(subframeP==9))
       UE_list->UE_template[CC_id][UE_id].DAI = 0;
@@ -2216,6 +2217,7 @@ void set_ue_dai(sub_frame_t   subframeP,
   case 6:
     if ((subframeP==0)||(subframeP==1)||(subframeP==5)||(subframeP==6)||(subframeP==9))
       UE_list->UE_template[CC_id][UE_id].DAI = 0;
+    break;
   default:
     UE_list->UE_template[CC_id][UE_id].DAI = 0;
     LOG_N(MAC,"unknow TDD config %d\n",tdd_config);

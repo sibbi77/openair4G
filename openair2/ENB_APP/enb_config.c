@@ -769,6 +769,7 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
                                 AssertError (0, parse_errors ++,
                                         "Failed to parse eNB configuration file %s, Component Carrier %d!\n",
                                         lib_config_file_name_pP, enb_properties.properties[enb_properties_index]->nb_cc++);
+                                continue; // FIXME this prevents segfaults below, not sure what happens after function exit
                             }
                             enb_properties.properties[enb_properties_index]->nb_cc++;
 
