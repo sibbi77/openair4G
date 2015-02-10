@@ -1308,7 +1308,7 @@ void update_otg_UE(module_id_t ue_mod_idP, unsigned int ctime) {
 
       src_id = module_id;
 
-      for (dst_id=0;dst_id<NUMBER_OF_eNB_MAX;dst_id++) {
+      for (dst_id=0;dst_id</*NUMBER_OF_eNB_MAX*/NB_SIG_CNX_UE;dst_id++) {
           if (mac_get_rrc_status(ue_mod_idP, 0, dst_id ) > 2 /*RRC_CONNECTED*/) {
               Packet_otg_elt_t *otg_pkt = malloc (sizeof(Packet_otg_elt_t));
               if (otg_pkt!=NULL)
