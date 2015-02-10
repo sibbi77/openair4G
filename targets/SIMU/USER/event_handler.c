@@ -1565,7 +1565,8 @@ void update_topo_model(Event_t event) {
         oai_emulation->topology_config.mobility.UE_mobility.sumo_config.end = new_mobility_model->UE_mobility.sumo_config.end;
         oai_emulation->topology_config.mobility.UE_mobility.sumo_config.step = new_mobility_model->UE_mobility.sumo_config.step; //  1000ms
         oai_emulation->topology_config.mobility.UE_mobility.sumo_config.hport = new_mobility_model->UE_mobility.sumo_config.hport;
-			}
+                        } else {
+                            // event.key is not NULL
 			if(!strcmp((char *) event.key, "UE_mobility_type"))
 			{
 				sprintf(oai_emulation->topology_config.mobility.UE_mobility.UE_mobility_type.selected_option, "%s", new_mobility_model->UE_mobility.UE_mobility_type.selected_option); 
@@ -1690,6 +1691,7 @@ oai_emulation->topology_config.mobility.UE_mobility.UE_moving_dynamics.max_speed
 			else if(!strcmp((char *) event.key, "sumo_config.hip"))       
 			{		 
         sprintf(oai_emulation->topology_config.mobility.UE_mobility.sumo_config.hip,"127.0.1.1");
+			}
 			}
 
 		}

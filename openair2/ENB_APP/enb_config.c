@@ -654,6 +654,7 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
                 AssertError (0, parse_errors ++,
                         "Failed to parse eNB configuration file %s, %u th enb\n",
                         lib_config_file_name_pP, i);
+                continue; // FIXME this prevents segfaults below, not sure what happens after function exit
             }
             // search if in active list
             for (j=0; j < num_enb_properties; j++) {
@@ -1633,6 +1634,7 @@ const Enb_properties_array_t *enb_config_init(char* lib_config_file_name_pP) {
                             AssertError (0, parse_errors ++,
                                     "Failed to parse eNB configuration file %s, %u th enb %u th mme address !\n",
                                     lib_config_file_name_pP, i, j);
+                            continue; // FIXME will prevent segfaults below, not sure what happens at function exit...
                         }
                         enb_properties.properties[enb_properties_index]->nb_mme += 1;
 
