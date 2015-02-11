@@ -219,7 +219,7 @@ void threegpplte_turbo_encoder(unsigned char *input,
     treillis_table_init();
   
   // look for f1 and f2 precomputed interleaver values
-  for (i=0;f1f2mat[i].nb_bits!= input_length_bits && i <188; i++);
+  for (i=0; i < 188 && f1f2mat[i].nb_bits != input_length_bits; i++);
   if ( i == 188 ) {
     msg("Illegal frame length!\n");
     return;

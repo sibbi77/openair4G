@@ -1911,7 +1911,7 @@ uint8_t get_phr_mapping (module_id_t module_idP, int CC_id, uint8_t eNB_index){
   if (CC_id>0) {
     LOG_E(MAC,"Transmission on secondary CCs is not supported yet\n");
     mac_xface->macphy_exit("MAC FATAL  CC_id>0");
-    return;
+    return 0; // not reached
   }
   //power headroom reporting range is from -23 ...+40 dB, as described in 36313
   //note: mac_xface->get_Po_NOMINAL_PUSCH(module_idP) is float
